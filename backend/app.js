@@ -28,6 +28,12 @@ app.use(
   }),
 );
 
+// import the all routes
+
+import healthCheckRoute from "./src/routes/healthCheck.routes.js";
+
+app.use("/api/v1/healthcheck", healthCheckRoute);
+
 app.get("/", (req, res) => {
   res.send("Welcome to E Pharmacy Management System");
 });
