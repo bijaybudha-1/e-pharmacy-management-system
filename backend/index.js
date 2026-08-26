@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
-import app from "./app.js";
 
-dotenv.config({
-  path: "./.env",
-});
+// Load environment variables before importing application modules.
+dotenv.config();
+
+const { default: app } = await import("./app.js");
 
 const port = process.env.PORT ?? 8000;
 
