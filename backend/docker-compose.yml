@@ -5,7 +5,7 @@ services:
     container_name: e_pharmacy_db
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: postg  res
       POSTGRES_DB: epharmacy
     ports:
       - "5432:5432"
