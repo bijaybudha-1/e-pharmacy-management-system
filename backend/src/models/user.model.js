@@ -7,7 +7,7 @@ const userTable = pgTable("users", {
   email: varchar({ length: 255 }).unique().notNull(),
   phone: varchar("phone_number", { length: 20 }),
   password: text().notNull(),
-  roleId: uuid("user_id")
+  roleId: uuid("role_id")
     .references(() => roleTable.id)
     .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
