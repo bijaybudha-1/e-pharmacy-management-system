@@ -4,46 +4,43 @@ import { userTable } from "../models/index.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { roleTable } from "../models/index.js";
 import bcrypt from "bcrypt";
+import {
+  comparePassword,
+  createUser,
+  getDefaultRoleId,
+  getHashedPassword,
+  getUserByEmail,
+} from "../services/auth.service.js";
 
 const userRegister = asyncHandler(async (req, res) => {
-  const { fullname, email, phone, password } = req.body;
+  const { email, password } = req.body;
 
-  const existingUser = await db
-    .select({
-      email: userTable.email,
-    })
-    .from(userTable)
-    .where(eq(userTable.email, email));
+  const existingUser = await getUserByEmail(email);
 
-  if (existingUser.length > 0) {
-    throw new ApiError(400, `User with email ${email} already exists!`);
+  if (existingUser) {
+    throw new ApiError(409, `User with email ${email} already exists!`);
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await getHashedPassword(password);
   const defaultFullName = email.split("@")[0];
 
-  const [defaultUserRole] = await db
-    .select({
-      roleId: roleTable.id,
-    })
-    .from(roleTable)
-    .where(eq(roleTable.roleName, "customer"));
+  const defaultUserRoleId = await getDefaultRoleId();
 
-  if (!defaultUserRole.roleId) {
+  if (!defaultUserRoleId) {
     throw new ApiError(500, "Customer role is not found");
   }
 
-  const [user] = await db
-    .insert(userTable)
-    .values({
-      email,
-      fullName: defaultFullName,
-      password: hashedPassword,
-      roleId: defaultUserRole.roleId,
-    })
-    .returning({ userId: userTable.id });
+  const user = await createUser(
+    email,
+    defaultFullName,
+    hashedPassword,
+    defaultUserRoleId,
+  );
+
+  if (!user?.userId) {
+    throw new ApiError(500, "Failed to create user");
+  }
 
   return res
     .status(201)
@@ -58,30 +55,17 @@ const userRegister = asyncHandler(async (req, res) => {
 
 const userLogin = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  if (!email) {
-    throw new ApiError(401, "Email is invalid");
-  }
 
-  if (!password) {
-    throw new ApiError(401, "Password is invalid");
-  }
+  const existingUser = await getUserByEmail(email);
 
-  const [existingUser] = await db
-    .select({
-      userId: userTable.id,
-      fullName: userTable.fullName,
-      email: userTable.email,
-      password: userTable.password,
-      roleId: userTable.roleId,
-    })
-    .from(userTable)
-    .where(eq(userTable.email, email));
-
-  if (!existingUser) {
+  if (!existingUser?.email) {
     throw new ApiError(401, "Email does not exists");
   }
 
-  const isValidPassword = await bcrypt.compare(password, existingUser.password);
+  const isValidPassword = await comparePassword(
+    password,
+    existingUser.password,
+  );
 
   if (!isValidPassword) {
     throw new ApiError(401, "Invalid password");
@@ -91,7 +75,7 @@ const userLogin = asyncHandler(async (req, res) => {
     userId: existingUser.id,
     email: existingUser.email,
     fullName: existingUser.fullName,
-    userId: existingUser.roleId,
+    roleId: existingUser.roleId,
   };
 
   return res
