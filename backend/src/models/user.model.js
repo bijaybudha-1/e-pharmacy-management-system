@@ -1,5 +1,16 @@
-import { pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 import roleTable from "./role.model.js";
+import { UserStatusEnum, AvailableUserStatus } from "../utils/constants.js";
+
+export const userStatusEnum = pgEnum("user_status", AvailableUserStatus);
 
 const userTable = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
@@ -10,6 +21,14 @@ const userTable = pgTable("users", {
   roleId: uuid("role_id")
     .references(() => roleTable.id)
     .notNull(),
+  status: userStatusEnum("user_status")
+    .notNull()
+    .default(UserStatusEnum.ACTIVE),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  emailValidationToken: varchar("email_validation_token", { length: 255 }),
+  emailValidationTokenExpiry: timestamp("email_validation_token_Expiry"),
+  refreshToken: varchar("refresh_token", { length: 255 }),
+  refreshTokenExpiry: timestamp("refresh_token_expiry"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .$onUpdate(() => new Date())

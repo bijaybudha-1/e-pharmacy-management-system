@@ -1,4 +1,4 @@
-import roleTable from "./role.model.js";
-import userTable from "./user.model.js";
+import roleTable, { userRoleEnum } from "./role.model.js";
+import userTable, { userStatusEnum } from "./user.model.js";
 
-export { userTable, roleTable };
+export { userTable, roleTable, userStatusEnum, userRoleEnum };
