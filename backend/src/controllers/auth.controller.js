@@ -32,7 +32,7 @@ const userRegister = asyncHandler(async (req, res) => {
     .where(eq(roleTable.roleName, "customer"));
 
   if (!defaultUserRole.roleId) {
-    throw new ApiError();
+    throw new ApiError(500, "Customer role is not found");
   }
 
   const [user] = await db
@@ -56,4 +56,47 @@ const userRegister = asyncHandler(async (req, res) => {
     );
 });
 
-export { userRegister };
+const userLogin = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email) {
+    throw new ApiError(401, "Email is invalid");
+  }
+
+  if (!password) {
+    throw new ApiError(401, "Password is invalid");
+  }
+
+  const [existingUser] = await db
+    .select({
+      userId: userTable.id,
+      fullName: userTable.fullName,
+      email: userTable.email,
+      password: userTable.password,
+      roleId: userTable.roleId,
+    })
+    .from(userTable)
+    .where(eq(userTable.email, email));
+
+  if (!existingUser) {
+    throw new ApiError(401, "Email does not exists");
+  }
+
+  const isValidPassword = await bcrypt.compare(password, existingUser.password);
+
+  if (!isValidPassword) {
+    throw new ApiError(401, "Invalid password");
+  }
+
+  const payload = {
+    userId: existingUser.id,
+    email: existingUser.email,
+    fullName: existingUser.fullName,
+    userId: existingUser.roleId,
+  };
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { data: payload }, "User Login Successfully"));
+});
+
+export { userRegister, userLogin };
