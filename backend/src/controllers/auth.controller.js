@@ -72,7 +72,7 @@ const userLogin = asyncHandler(async (req, res) => {
   }
 
   const payload = {
-    userId: existingUser.id,
+    userId: existingUser.userId,
     email: existingUser.email,
     fullName: existingUser.fullName,
     roleId: existingUser.roleId,
