@@ -1,10 +1,6 @@
-import { eq } from "drizzle-orm";
-import db from "../db/index.js";
-import { userTable } from "../models/index.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import bcrypt from "bcrypt";
 import {
   comparePassword,
   createUser,
@@ -12,6 +8,7 @@ import {
   getHashedPassword,
   getUserByEmail,
 } from "../services/auth.service.js";
+import { generateTemporaryToken } from "../services/token.service.js";
 
 const userRegister = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -31,11 +28,19 @@ const userRegister = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Customer role is not found");
   }
 
+  const {
+    unHashedToken,
+    hashedToken: emailValidationToken,
+    tokenExpiry: emailValidationTokenExpiry,
+  } = await generateTemporaryToken();
+
   const user = await createUser(
     email,
     defaultFullName,
     hashedPassword,
     defaultUserRoleId,
+    emailValidationToken,
+    emailValidationTokenExpiry,
   );
 
   if (!user?.userId) {

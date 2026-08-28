@@ -18,7 +18,14 @@ const getUserByEmail = async (email) => {
   return existingUser;
 };
 
-const createUser = async (email, fullName, password, roleId) => {
+const createUser = async (
+  email,
+  fullName,
+  password,
+  roleId,
+  emailValidationToken,
+  emailValidationTokenExpiry,
+) => {
   const [user] = await db
     .insert(userTable)
     .values({
@@ -26,6 +33,8 @@ const createUser = async (email, fullName, password, roleId) => {
       fullName,
       password,
       roleId,
+      emailValidationToken,
+      emailValidationTokenExpiry,
     })
     .returning({ userId: userTable.id });
 
