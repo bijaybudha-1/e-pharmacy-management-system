@@ -24,11 +24,10 @@ const userTable = pgTable("users", {
   status: userStatusEnum("user_status")
     .notNull()
     .default(UserStatusEnum.ACTIVE),
-  emailVerified: boolean("email_verified").notNull().default(false),
-  emailValidationToken: varchar("email_validation_token", { length: 255 }),
-  emailValidationTokenExpiry: timestamp("email_validation_token_Expiry"),
   refreshToken: varchar("refresh_token", { length: 255 }),
-  refreshTokenExpiry: timestamp("refresh_token_expiry"),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  emailValidationToken: text("email_validation_token"),
+  emailValidationTokenExpiry: timestamp("email_validation_token_Expiry"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .$onUpdate(() => new Date())
