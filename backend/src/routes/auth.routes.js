@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  getCurrentUser,
   userLogin,
   userLogout,
   userRegister,
@@ -22,5 +23,6 @@ router.route("/verify-email/:verificationToken").get(verifyEmail);
 
 // Secure Route
 router.route("/logout").post(authMiddleware, userLogout);
+router.route("/current-user").get(authMiddleware, getCurrentUser);
 
 export default router;
