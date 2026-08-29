@@ -94,6 +94,21 @@ const updateEmailVerified = async (userId) => {
   return emailVerified;
 };
 
+const updateRefreshToken = async (userId, refreshToken) => {
+  const updatedUser = await db
+    .update(userTable)
+    .set({
+      refreshToken: refreshToken,
+    })
+    .where(eq(userTable.id, userId))
+    .returning();
+
+  console.log("User ID: ", userId);
+  console.log("Refresh Token: ", refreshToken);
+
+  return updatedUser;
+};
+
 export {
   getUserByEmail,
   createUser,
@@ -102,4 +117,5 @@ export {
   comparePassword,
   getUserByValidEmailVerificationToken,
   updateEmailVerified,
+  updateRefreshToken,
 };

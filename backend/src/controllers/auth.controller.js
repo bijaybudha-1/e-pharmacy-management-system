@@ -9,8 +9,11 @@ import {
   getUserByEmail,
   getUserByValidEmailVerificationToken,
   updateEmailVerified,
+  updateRefreshToken,
 } from "../services/auth.service.js";
 import {
+  generateAccessToken,
+  generateRefreshToken,
   generateTemporaryToken,
   getHashedToken,
 } from "../services/token.service.js";
@@ -102,9 +105,34 @@ const userLogin = asyncHandler(async (req, res) => {
     roleId: existingUser.roleId,
   };
 
+  const accessToken = generateAccessToken(payload);
+  const refreshToken = generateRefreshToken(existingUser.userId);
+
+  const saveRefreshToken = await updateRefreshToken(
+    existingUser.userId,
+    refreshToken,
+  );
+
+  if (!saveRefreshToken) {
+    throw new ApiError(500, "Failed to update refresh token");
+  }
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
   return res
     .status(200)
-    .json(new ApiResponse(200, { data: payload }, "User Login Successfully"));
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        { accessToken: accessToken },
+        "User Login Successfully",
+      ),
+    );
 });
 
 const verifyEmail = asyncHandler(async (req, res) => {
