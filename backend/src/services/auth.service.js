@@ -18,6 +18,33 @@ const getUserByEmail = async (email) => {
   return existingUser;
 };
 
+const getUserById = async (userId) => {
+  const [user] = await db
+    .select({
+      id: userTable.id,
+      fullName: userTable.fullName,
+      email: userTable.email,
+      emailVerified: userTable.emailVerified,
+    })
+    .from(userTable)
+    .where(eq(userTable.id, userId))
+    .limit(1);
+
+  return user;
+};
+
+const getUserByIdAndUpdate = async (userId) => {
+  const [user] = await db
+    .update(userTable)
+    .set({
+      refreshToken: null,
+    })
+    .where(eq(userTable.id, userId))
+    .returning();
+
+  return user;
+};
+
 const createUser = async (
   email,
   fullName,
@@ -103,9 +130,6 @@ const updateRefreshToken = async (userId, refreshToken) => {
     .where(eq(userTable.id, userId))
     .returning();
 
-  console.log("User ID: ", userId);
-  console.log("Refresh Token: ", refreshToken);
-
   return updatedUser;
 };
 
@@ -118,4 +142,6 @@ export {
   getUserByValidEmailVerificationToken,
   updateEmailVerified,
   updateRefreshToken,
+  getUserById,
+  getUserByIdAndUpdate,
 };

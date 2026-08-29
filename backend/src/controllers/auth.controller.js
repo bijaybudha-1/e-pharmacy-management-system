@@ -7,6 +7,7 @@ import {
   getDefaultRoleId,
   getHashedPassword,
   getUserByEmail,
+  getUserByIdAndUpdate,
   getUserByValidEmailVerificationToken,
   updateEmailVerified,
   updateRefreshToken,
@@ -170,4 +171,19 @@ const verifyEmail = asyncHandler(async (req, res) => {
     );
 });
 
-export { userRegister, userLogin, verifyEmail };
+const userLogout = asyncHandler(async (req, res) => {
+  await getUserByIdAndUpdate(req.user?.id);
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User Logout"));
+});
+
+export { userRegister, userLogin, verifyEmail, userLogout };

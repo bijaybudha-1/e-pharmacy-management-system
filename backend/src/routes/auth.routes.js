@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   userLogin,
+  userLogout,
   userRegister,
   verifyEmail,
 } from "../controllers/auth.controller.js";
@@ -9,6 +10,7 @@ import {
   loginPostRequestBodySchema,
   registerPostRequestBodySchema,
 } from "../validators/auth.validation.js";
+import { authMiddleware } from "../middlewares/auth.middlewares.js";
 
 const router = Router();
 
@@ -17,5 +19,8 @@ router
   .post(validate(registerPostRequestBodySchema), userRegister);
 router.route("/login").post(validate(loginPostRequestBodySchema), userLogin);
 router.route("/verify-email/:verificationToken").get(verifyEmail);
+
+// Secure Route
+router.route("/logout").post(authMiddleware, userLogout);
 
 export default router;
