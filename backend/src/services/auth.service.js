@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, gt } from "drizzle-orm";
 import db from "../db/index.js";
 import { roleTable, userTable } from "../models/index.js";
 import bcrypt from "bcrypt";
@@ -36,7 +36,11 @@ const createUser = async (
       emailValidationToken,
       emailValidationTokenExpiry,
     })
-    .returning({ userId: userTable.id });
+    .returning({
+      userId: userTable.id,
+      email: userTable.email,
+      fullName: userTable.fullName,
+    });
 
   return user;
 };
@@ -61,10 +65,41 @@ const getDefaultRoleId = async () => {
   return defaultId.roleId;
 };
 
+const getUserByValidEmailVerificationToken = async (hashedToken) => {
+  const [user] = await db
+    .select()
+    .from(userTable)
+    .where(
+      and(
+        eq(userTable.emailValidationToken, hashedToken),
+        gt(userTable.emailValidationTokenExpiry, new Date()),
+      ),
+    )
+    .limit(1);
+
+  return user;
+};
+
+const updateEmailVerified = async (userId) => {
+  const [emailVerified] = await db
+    .update(userTable)
+    .set({
+      emailVerified: true,
+      emailValidationToken: null,
+      emailValidationTokenExpiry: null,
+    })
+    .where(eq(userTable.id, userId))
+    .returning();
+
+  return emailVerified;
+};
+
 export {
   getUserByEmail,
   createUser,
   getHashedPassword,
   getDefaultRoleId,
   comparePassword,
+  getUserByValidEmailVerificationToken,
+  updateEmailVerified,
 };
