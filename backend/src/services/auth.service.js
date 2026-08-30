@@ -169,6 +169,35 @@ const addForgotPasswordAndExpiryToken = async (
   return updateForgotPasswordToken;
 };
 
+const getResetForgotPassword = async (hashedToken) => {
+  const [user] = await db
+    .select()
+    .from(userTable)
+    .where(
+      and(
+        eq(userTable.forgotPasswordToken, hashedToken),
+        gt(userTable.forgotPasswordExpiry, new Date()),
+      ),
+    )
+    .limit(1);
+
+  return user;
+};
+
+const updateResetForgotPassword = async (userId, newPassword) => {
+  const [updatedUser] = await db
+    .update(userTable)
+    .set({
+      password: newPassword,
+      forgotPasswordToken: null,
+      forgotPasswordExpiry: null,
+    })
+    .where(eq(userTable.id, userId))
+    .returning();
+
+  return updatedUser;
+};
+
 export {
   getUserByEmail,
   createUser,
@@ -182,4 +211,6 @@ export {
   getUserByIdAndUpdate,
   updateEmailVerificationToken,
   addForgotPasswordAndExpiryToken,
+  getResetForgotPassword,
+  updateResetForgotPassword,
 };
