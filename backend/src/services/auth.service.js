@@ -163,7 +163,10 @@ const addForgotPasswordAndExpiryToken = async (
       forgotPasswordToken: forgotToken,
       forgotPasswordExpiry: forgotExpiry,
     })
-    .where(eq(userTable.id, userId));
+    .where(eq(userTable.id, userId))
+    .returning();
+
+  return updateForgotPasswordToken;
 };
 
 export {
