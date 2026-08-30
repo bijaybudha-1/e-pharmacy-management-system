@@ -54,9 +54,14 @@ const generateRefreshToken = (userId) => {
     },
   );
 };
+
+const decodedJwtToken = (incomingRefreshToken) => {
+  return jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+};
 export {
   generateTemporaryToken,
   getHashedToken,
   generateAccessToken,
   generateRefreshToken,
+  decodedJwtToken,
 };
