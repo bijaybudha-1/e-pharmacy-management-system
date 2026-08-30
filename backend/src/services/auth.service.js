@@ -25,6 +25,8 @@ const getUserById = async (userId) => {
       fullName: userTable.fullName,
       email: userTable.email,
       emailVerified: userTable.emailVerified,
+      refreshToken: userTable.refreshToken,
+      roleId: userTable.roleId,
     })
     .from(userTable)
     .where(eq(userTable.id, userId))

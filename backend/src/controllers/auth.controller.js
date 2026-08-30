@@ -15,6 +15,7 @@ import {
   updateRefreshToken,
 } from "../services/auth.service.js";
 import {
+  decodedJwtToken,
   generateAccessToken,
   generateRefreshToken,
   generateTemporaryToken,
@@ -223,6 +224,64 @@ const resendVerifyEmail = asyncHandler(async (req, res) => {
   });
 });
 
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  const incomingRefreshToken =
+    req.cookies.refreshToken || req.body.refreshToken;
+
+  if (!incomingRefreshToken) {
+    throw new ApiError(401, "Refresh token is required");
+  }
+
+  let decodedToken;
+  try {
+    decodedToken = decodedJwtToken(incomingRefreshToken);
+  } catch (error) {
+    throw new ApiError(401, "Invalid or expired refresh token");
+  }
+
+  const user = await getUserById(decodedToken?.id);
+
+  if (!user) {
+    throw new ApiError(401, "Invalid refresh token");
+  }
+
+  if (incomingRefreshToken !== user.refreshToken) {
+    throw new ApiError(401, "Invalid refresh token");
+  }
+
+  const payload = {
+    userId: user.id,
+    fullName: user.fullName,
+    email: user.email,
+    roleId: user.roleId,
+  };
+
+  const accessToken = generateAccessToken(payload);
+  const refreshToken = generateRefreshToken(user.id);
+
+  await updateRefreshToken(user.id, refreshToken);
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          accessToken,
+          refreshToken,
+        },
+        "Access token refreshed successfully",
+      ),
+    );
+});
+
 export {
   userRegister,
   userLogin,
@@ -230,4 +289,5 @@ export {
   userLogout,
   getCurrentUser,
   resendVerifyEmail,
+  refreshAccessToken,
 };

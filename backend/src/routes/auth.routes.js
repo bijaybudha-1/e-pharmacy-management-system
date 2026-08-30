@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getCurrentUser,
+  refreshAccessToken,
   resendVerifyEmail,
   userLogin,
   userLogout,
@@ -22,6 +23,7 @@ router
   .post(validate(registerPostRequestBodySchema), userRegister);
 router.route("/login").post(validate(loginPostRequestBodySchema), userLogin);
 router.route("/verify-email/:verificationToken").get(verifyEmail);
+router.route("/refresh-token").post(refreshAccessToken);
 
 // Secure Route
 router.route("/logout").post(authMiddleware, userLogout);
