@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  forgotPasswordRequest,
   getCurrentUser,
   refreshAccessToken,
   resendVerifyEmail,
@@ -10,6 +11,7 @@ import {
 } from "../controllers/auth.controller.js";
 import { validate } from "../middlewares/validator.middlewares.js";
 import {
+  forgotPasswordRequestBodySchema,
   loginPostRequestBodySchema,
   registerPostRequestBodySchema,
 } from "../validators/auth.validation.js";
@@ -24,6 +26,9 @@ router
 router.route("/login").post(validate(loginPostRequestBodySchema), userLogin);
 router.route("/verify-email/:verificationToken").get(verifyEmail);
 router.route("/refresh-token").post(refreshAccessToken);
+router
+  .route("/forgot-password")
+  .post(validate(forgotPasswordRequestBodySchema), forgotPasswordRequest);
 
 // Secure Route
 router.route("/logout").post(authMiddleware, userLogout);

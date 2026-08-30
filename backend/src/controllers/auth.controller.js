@@ -2,6 +2,7 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {
+  addForgotPasswordAndExpiryToken,
   comparePassword,
   createUser,
   getDefaultRoleId,
@@ -23,6 +24,7 @@ import {
 } from "../services/token.service.js";
 import {
   emailVerificationMailgenContent,
+  forgotPasswordMailgenContent,
   sendEmail,
 } from "../utils/mailGenerator.js";
 
@@ -282,6 +284,39 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     );
 });
 
+const forgotPasswordRequest = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  const user = await getUserByEmail(email);
+
+  if (!user) {
+    throw new ApiError(404, `User email ${email} with does not exist`);
+  }
+
+  const { unHashedToken, hashedToken, tokenExpiry } = generateTemporaryToken();
+
+  await addForgotPasswordAndExpiryToken(user.userId, hashedToken, tokenExpiry);
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { resetToken: unHashedToken },
+        "Password reset mail has been send on your mail id",
+      ),
+    );
+
+  await sendEmail({
+    email: user.email,
+    subject: "Password reset request",
+    mailgenContent: forgotPasswordMailgenContent(
+      user.fullName,
+      `${req.protocol}://${req.get("host")}/api/v1/auth/reset-password/${unHashedToken}`,
+    ),
+  });
+});
+
 export {
   userRegister,
   userLogin,
@@ -290,4 +325,5 @@ export {
   getCurrentUser,
   resendVerifyEmail,
   refreshAccessToken,
+  forgotPasswordRequest,
 };
