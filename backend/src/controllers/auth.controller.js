@@ -7,8 +7,10 @@ import {
   getDefaultRoleId,
   getHashedPassword,
   getUserByEmail,
+  getUserById,
   getUserByIdAndUpdate,
   getUserByValidEmailVerificationToken,
+  updateEmailVerificationToken,
   updateEmailVerified,
   updateRefreshToken,
 } from "../services/auth.service.js";
@@ -192,4 +194,40 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, req.user, "Current user fetch successfully"));
 });
 
-export { userRegister, userLogin, verifyEmail, userLogout, getCurrentUser };
+const resendVerifyEmail = asyncHandler(async (req, res) => {
+  const user = await getUserById(req.user?.id);
+
+  if (user.emailVerified) {
+    throw new ApiError(409, "Email is already verified");
+  }
+
+  const { unHashedToken, hashedToken, tokenExpiry } = generateTemporaryToken();
+
+  const updatedUser = await updateEmailVerificationToken(
+    user.id,
+    hashedToken,
+    tokenExpiry,
+  );
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Mail has been send your email id"));
+
+  await sendEmail({
+    email: updatedUser.email,
+    subject: "Please verify your email",
+    mailgenContent: emailVerificationMailgenContent(
+      user.fullName,
+      `${req.protocol}://${req.get("host")}/api/v1/auth/verify-email/${unHashedToken}`,
+    ),
+  });
+});
+
+export {
+  userRegister,
+  userLogin,
+  verifyEmail,
+  userLogout,
+  getCurrentUser,
+  resendVerifyEmail,
+};

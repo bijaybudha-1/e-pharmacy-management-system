@@ -121,6 +121,23 @@ const updateEmailVerified = async (userId) => {
   return emailVerified;
 };
 
+const updateEmailVerificationToken = async (
+  userId,
+  hashedToken,
+  tokenExpiry,
+) => {
+  const [user] = await db
+    .update(userTable)
+    .set({
+      emailValidationToken: hashedToken,
+      emailValidationTokenExpiry: tokenExpiry,
+    })
+    .where(eq(userTable.id, userId))
+    .returning();
+
+  return user;
+};
+
 const updateRefreshToken = async (userId, refreshToken) => {
   const updatedUser = await db
     .update(userTable)
@@ -144,4 +161,5 @@ export {
   updateRefreshToken,
   getUserById,
   getUserByIdAndUpdate,
+  updateEmailVerificationToken,
 };

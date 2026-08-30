@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getCurrentUser,
+  resendVerifyEmail,
   userLogin,
   userLogout,
   userRegister,
@@ -15,6 +16,7 @@ import { authMiddleware } from "../middlewares/auth.middlewares.js";
 
 const router = Router();
 
+// UnSecure Route
 router
   .route("/register")
   .post(validate(registerPostRequestBodySchema), userRegister);
@@ -24,5 +26,6 @@ router.route("/verify-email/:verificationToken").get(verifyEmail);
 // Secure Route
 router.route("/logout").post(authMiddleware, userLogout);
 router.route("/current-user").get(authMiddleware, getCurrentUser);
+router.route("/resend-verify-email").post(authMiddleware, resendVerifyEmail);
 
 export default router;
