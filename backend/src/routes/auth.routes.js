@@ -4,6 +4,7 @@ import {
   getCurrentUser,
   refreshAccessToken,
   resendVerifyEmail,
+  resetForgotPassword,
   userLogin,
   userLogout,
   userRegister,
@@ -14,6 +15,7 @@ import {
   forgotPasswordRequestBodySchema,
   loginPostRequestBodySchema,
   registerPostRequestBodySchema,
+  resetPasswordRequestBodySchema,
 } from "../validators/auth.validation.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 
@@ -29,6 +31,9 @@ router.route("/refresh-token").post(refreshAccessToken);
 router
   .route("/forgot-password")
   .post(validate(forgotPasswordRequestBodySchema), forgotPasswordRequest);
+router
+  .route("/reset-password/:resetToken")
+  .post(validate(resetPasswordRequestBodySchema), resetForgotPassword);
 
 // Secure Route
 router.route("/logout").post(authMiddleware, userLogout);

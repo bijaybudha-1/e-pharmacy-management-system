@@ -7,6 +7,7 @@ import {
   createUser,
   getDefaultRoleId,
   getHashedPassword,
+  getResetForgotPassword,
   getUserByEmail,
   getUserById,
   getUserByIdAndUpdate,
@@ -14,6 +15,7 @@ import {
   updateEmailVerificationToken,
   updateEmailVerified,
   updateRefreshToken,
+  updateResetForgotPassword,
 } from "../services/auth.service.js";
 import {
   decodedJwtToken,
@@ -317,6 +319,26 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
   });
 });
 
+const resetForgotPassword = asyncHandler(async (req, res) => {
+  const { resetToken } = req.params;
+  const { password } = req.body;
+
+  const hashedToken = getHashedToken(resetToken);
+
+  const validToken = await getResetForgotPassword(hashedToken);
+
+  if (!validToken) {
+    throw new ApiError(400, "Token is invalid or expired");
+  }
+
+  const hashedPassword = await getHashedPassword(password);
+  await updateResetForgotPassword(validToken.id, hashedPassword);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password reset successfully"));
+});
+
 export {
   userRegister,
   userLogin,
@@ -326,4 +348,5 @@ export {
   resendVerifyEmail,
   refreshAccessToken,
   forgotPasswordRequest,
+  resetForgotPassword,
 };
