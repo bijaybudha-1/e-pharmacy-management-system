@@ -10,4 +10,12 @@ const loginPostRequestBodySchema = z.object({
   password: z.string().trim().min(6, "Password must be at least 6 characters"),
 });
 
-export { registerPostRequestBodySchema, loginPostRequestBodySchema };
+const forgotPasswordRequestBodySchema = z.object({
+  email: z.string().trim().email().lowercase(),
+});
+
+export {
+  registerPostRequestBodySchema,
+  loginPostRequestBodySchema,
+  forgotPasswordRequestBodySchema,
+};
