@@ -152,6 +152,20 @@ const updateRefreshToken = async (userId, refreshToken) => {
   return updatedUser;
 };
 
+const addForgotPasswordAndExpiryToken = async (
+  userId,
+  forgotToken,
+  forgotExpiry,
+) => {
+  const [updateForgotPasswordToken] = await db
+    .update(userTable)
+    .set({
+      forgotPasswordToken: forgotToken,
+      forgotPasswordExpiry: forgotExpiry,
+    })
+    .where(eq(userTable.id, userId));
+};
+
 export {
   getUserByEmail,
   createUser,
@@ -164,4 +178,5 @@ export {
   getUserById,
   getUserByIdAndUpdate,
   updateEmailVerificationToken,
+  addForgotPasswordAndExpiryToken,
 };
