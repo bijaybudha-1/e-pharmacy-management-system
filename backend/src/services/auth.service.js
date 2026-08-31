@@ -24,6 +24,7 @@ const getUserById = async (userId) => {
       id: userTable.id,
       fullName: userTable.fullName,
       email: userTable.email,
+      password: userTable.password,
       emailVerified: userTable.emailVerified,
       refreshToken: userTable.refreshToken,
       roleId: userTable.roleId,
@@ -198,6 +199,16 @@ const updateResetForgotPassword = async (userId, newPassword) => {
   return updatedUser;
 };
 
+const updatePassword = async (userId, password) => {
+  const [user] = await db
+    .update(userTable)
+    .set({ password })
+    .where(eq(userTable.id, userId))
+    .returning();
+
+  return user;
+};
+
 export {
   getUserByEmail,
   createUser,
@@ -213,4 +224,5 @@ export {
   addForgotPasswordAndExpiryToken,
   getResetForgotPassword,
   updateResetForgotPassword,
+  updatePassword,
 };
