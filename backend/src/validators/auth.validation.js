@@ -18,9 +18,21 @@ const resetPasswordRequestBodySchema = z.object({
   password: z.string().trim().min(6, "Password must be at least 6 characters"),
 });
 
+const changePasswordRequestBodySchema = z.object({
+  oldPassword: z
+    .string()
+    .trim()
+    .min(6, "Password must be at least 6 characters"),
+  newPassword: z
+    .string()
+    .trim()
+    .min(6, "Password must be at least 6 characters"),
+});
+
 export {
   registerPostRequestBodySchema,
   loginPostRequestBodySchema,
   forgotPasswordRequestBodySchema,
   resetPasswordRequestBodySchema,
+  changePasswordRequestBodySchema,
 };
