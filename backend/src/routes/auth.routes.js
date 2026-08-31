@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  changePassword,
   forgotPasswordRequest,
   getCurrentUser,
   refreshAccessToken,
@@ -12,6 +13,7 @@ import {
 } from "../controllers/auth.controller.js";
 import { validate } from "../middlewares/validator.middlewares.js";
 import {
+  changePasswordRequestBodySchema,
   forgotPasswordRequestBodySchema,
   loginPostRequestBodySchema,
   registerPostRequestBodySchema,
@@ -39,5 +41,12 @@ router
 router.route("/logout").post(authMiddleware, userLogout);
 router.route("/current-user").get(authMiddleware, getCurrentUser);
 router.route("/resend-verify-email").post(authMiddleware, resendVerifyEmail);
+router
+  .route("/change-password")
+  .post(
+    authMiddleware,
+    validate(changePasswordRequestBodySchema),
+    changePassword,
+  );
 
 export default router;

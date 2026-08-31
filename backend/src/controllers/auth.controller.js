@@ -14,6 +14,7 @@ import {
   getUserByValidEmailVerificationToken,
   updateEmailVerificationToken,
   updateEmailVerified,
+  updatePassword,
   updateRefreshToken,
   updateResetForgotPassword,
 } from "../services/auth.service.js";
@@ -339,6 +340,26 @@ const resetForgotPassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password reset successfully"));
 });
 
+const changePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  const user = await getUserById(req.user?.id);
+
+  const isPasswordValid = await comparePassword(oldPassword, user.password);
+
+  if (!isPasswordValid) {
+    throw new ApiError(400, "Invalid old password");
+  }
+
+  const hashesPassword = await getHashedPassword(newPassword);
+
+  await updatePassword(user.id, hashesPassword);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password changed successfully"));
+});
+
 export {
   userRegister,
   userLogin,
@@ -349,4 +370,5 @@ export {
   refreshAccessToken,
   forgotPasswordRequest,
   resetForgotPassword,
+  changePassword,
 };
