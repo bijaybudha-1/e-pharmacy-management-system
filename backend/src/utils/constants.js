@@ -19,8 +19,15 @@ export const StatusEnum = {
   INACTIVE: "inactive",
 };
 
+export const MedicineStatusEnum = {
+  ACTIVE: "active",
+  INACTIVE: "inactive",
+  DISCONTINUED: "Discontinued",
+};
+
 export const AvailableUserRole = Object.values(UserRoleEnum);
 export const AvailablePrescriptionStatus = Object.values(
   PrescriptionStatusEnum,
 );
 export const AvailableStatus = Object.values(StatusEnum);
+export const AvailableMedicineStatus = Object.values(MedicineStatusEnum);
