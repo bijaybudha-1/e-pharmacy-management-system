@@ -8,9 +8,9 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import roleTable from "./role.model.js";
-import { UserStatusEnum, AvailableUserStatus } from "../utils/constants.js";
+import { StatusEnum, AvailableStatus } from "../utils/constants.js";
 
-export const userStatusEnum = pgEnum("user_status", AvailableUserStatus);
+export const userStatusEnum = pgEnum("user_status", AvailableStatus);
 
 const userTable = pgTable("users", {
   id: uuid().primaryKey().defaultRandom(),
@@ -21,9 +21,7 @@ const userTable = pgTable("users", {
   roleId: uuid("role_id")
     .references(() => roleTable.id)
     .notNull(),
-  status: userStatusEnum("user_status")
-    .notNull()
-    .default(UserStatusEnum.ACTIVE),
+  status: userStatusEnum("user_status").notNull().default(StatusEnum.ACTIVE),
   refreshToken: text("refresh_token"),
   emailVerified: boolean("email_verified").notNull().default(false),
   emailValidationToken: text("email_validation_token"),
