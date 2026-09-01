@@ -14,7 +14,7 @@ export const PrescriptionStatusEnum = {
   REJECT: "reject",
 };
 
-export const UserStatusEnum = {
+export const StatusEnum = {
   ACTIVE: "active",
   INACTIVE: "inactive",
 };
@@ -23,4 +23,4 @@ export const AvailableUserRole = Object.values(UserRoleEnum);
 export const AvailablePrescriptionStatus = Object.values(
   PrescriptionStatusEnum,
 );
-export const AvailableUserStatus = Object.values(UserStatusEnum);
+export const AvailableStatus = Object.values(StatusEnum);
