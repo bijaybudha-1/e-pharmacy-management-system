@@ -3,7 +3,7 @@ import userTable from "./user.model.js";
 import addressTable from "./address.model.js";
 
 const customersTable = pgTable("customers", {
-  customerId: uuid().primaryKey().defaultRandom(),
+  customerId: uuid("customer_id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
     .references(() => userTable.id)
     .notNull(),

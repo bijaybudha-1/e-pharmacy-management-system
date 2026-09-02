@@ -10,7 +10,7 @@ export const userRoleEnum = pgEnum("role_name", AvailableUserRole);
 export const userStatusEnum = pgEnum("user_status", AvailableStatus);
 
 const roleTable = pgTable("roles", {
-  id: uuid().primaryKey().defaultRandom(),
+  id: uuid("role_id").primaryKey().defaultRandom(),
   roleName: userRoleEnum("role_name").notNull().default(UserRoleEnum.CUSTOMER),
   status: userStatusEnum("user_status").notNull().default(StatusEnum.ACTIVE),
   createdAt: timestamp("created_at").defaultNow().notNull(),

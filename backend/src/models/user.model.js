@@ -13,7 +13,7 @@ import { StatusEnum, AvailableStatus } from "../utils/constants.js";
 export const userStatusEnum = pgEnum("user_status", AvailableStatus);
 
 const userTable = pgTable("users", {
-  id: uuid().primaryKey().defaultRandom(),
+  id: uuid("customer_id").primaryKey().defaultRandom(),
   fullName: varchar("full_name", { length: 55 }).notNull(),
   email: varchar({ length: 255 }).unique().notNull(),
   phone: varchar("phone_number", { length: 20 }),

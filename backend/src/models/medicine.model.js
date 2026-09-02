@@ -21,7 +21,7 @@ export const medicineStatusEnum = pgEnum(
 );
 
 const medicineTable = pgTable("medicines", {
-  medicineId: uuid().primaryKey().defaultRandom(),
+  medicineId: uuid("medicine_id").primaryKey().defaultRandom(),
   categoryId: uuid("category_id")
     .references(() => categoriesTable.categoryId)
     .notNull(),
