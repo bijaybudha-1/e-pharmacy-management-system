@@ -17,6 +17,7 @@ export const PrescriptionStatusEnum = {
 export const StatusEnum = {
   ACTIVE: "active",
   INACTIVE: "inactive",
+  SUSPENDED: "suspended",
 };
 
 export const MedicineStatusEnum = {
