@@ -1,51 +1,32 @@
 import { and, eq, gt } from "drizzle-orm";
 import db from "../db/index.js";
-import { roleTable, userTable } from "../models/index.js";
+import { userTable, roleTable, customersTable } from "../models/index.js";
 import bcrypt from "bcrypt";
 
 const getUserByEmail = async (email) => {
-  const [existingUser] = await db
-    .select({
-      userId: userTable.id,
-      fullName: userTable.fullName,
-      email: userTable.email,
-      password: userTable.password,
-      roleId: userTable.roleId,
-    })
-    .from(userTable)
-    .where(eq(userTable.email, email));
-
-  return existingUser;
-};
-
-const getUserById = async (userId) => {
   const [user] = await db
-    .select({
-      id: userTable.id,
-      fullName: userTable.fullName,
-      email: userTable.email,
-      password: userTable.password,
-      emailVerified: userTable.emailVerified,
-      refreshToken: userTable.refreshToken,
-      roleId: userTable.roleId,
-    })
+    .select()
     .from(userTable)
-    .where(eq(userTable.id, userId))
+    .where(eq(userTable.email, email))
     .limit(1);
 
   return user;
 };
 
-const getUserByIdAndUpdate = async (userId) => {
-  const [user] = await db
-    .update(userTable)
-    .set({
-      refreshToken: null,
+const getDefaultRole = async () => {
+  const [role] = await db
+    .select({
+      roleId: roleTable.roleId,
     })
-    .where(eq(userTable.id, userId))
-    .returning();
+    .from(roleTable)
+    .where(eq(roleTable.roleName, "customer"))
+    .limit(1);
 
-  return user;
+  return role;
+};
+
+const getHashedPassword = async (password) => {
+  return await bcrypt.hash(password, 10);
 };
 
 const createUser = async (
@@ -53,46 +34,34 @@ const createUser = async (
   fullName,
   password,
   roleId,
-  emailValidationToken,
-  emailValidationTokenExpiry,
+  emailVerificationToken,
+  emailVerificationTokenExpiry,
 ) => {
-  const [user] = await db
-    .insert(userTable)
-    .values({
-      email,
-      fullName,
-      password,
-      roleId,
-      emailValidationToken,
-      emailValidationTokenExpiry,
-    })
-    .returning({
-      userId: userTable.id,
-      email: userTable.email,
-      fullName: userTable.fullName,
+  const user = await db.transaction(async (tx) => {
+    const [insertUser] = await tx
+      .insert(userTable)
+      .values({
+        email,
+        fullName,
+        password,
+        roleId,
+        emailVerificationToken,
+        emailVerificationTokenExpiry,
+      })
+      .returning({
+        userId: userTable.userId,
+        fullName: userTable.fullName,
+        email: userTable.email,
+      });
+
+    await tx.insert(customersTable).values({
+      userId: insertUser.userId,
+      loyaltyPoints: 0,
     });
 
+    return insertUser;
+  });
   return user;
-};
-
-const getHashedPassword = async (password) => {
-  const hashedPassword = await bcrypt.hash(password, 10);
-  return hashedPassword;
-};
-
-const comparePassword = async (password, hashPassword) => {
-  return await bcrypt.compare(password, hashPassword);
-};
-
-const getDefaultRoleId = async () => {
-  const [defaultId] = await db
-    .select({
-      roleId: roleTable.id,
-    })
-    .from(roleTable)
-    .where(eq(roleTable.roleName, "customer"));
-
-  return defaultId.roleId;
 };
 
 const getUserByValidEmailVerificationToken = async (hashedToken) => {
@@ -118,10 +87,44 @@ const updateEmailVerified = async (userId) => {
       emailValidationToken: null,
       emailValidationTokenExpiry: null,
     })
-    .where(eq(userTable.id, userId))
+    .where(eq(userTable.userId, userId))
     .returning();
 
   return emailVerified;
+};
+
+const getUserById = async (userId) => {
+  const [user] = await db
+    .select({
+      id: userTable.userId,
+      fullName: userTable.fullName,
+      email: userTable.email,
+      password: userTable.password,
+      emailVerified: userTable.emailVerified,
+      refreshToken: userTable.refreshToken,
+      roleId: userTable.roleId,
+    })
+    .from(userTable)
+    .where(eq(userTable.userId, userId))
+    .limit(1);
+
+  return user;
+};
+
+const getUserByIdAndUpdate = async (userId) => {
+  const [user] = await db
+    .update(userTable)
+    .set({
+      refreshToken: null,
+    })
+    .where(eq(userTable.userId, userId))
+    .returning();
+
+  return user;
+};
+
+const comparePassword = async (password, hashPassword) => {
+  return await bcrypt.compare(password, hashPassword);
 };
 
 const updateEmailVerificationToken = async (
@@ -135,7 +138,7 @@ const updateEmailVerificationToken = async (
       emailValidationToken: hashedToken,
       emailValidationTokenExpiry: tokenExpiry,
     })
-    .where(eq(userTable.id, userId))
+    .where(eq(userTable.userId, userId))
     .returning();
 
   return user;
@@ -147,7 +150,7 @@ const updateRefreshToken = async (userId, refreshToken) => {
     .set({
       refreshToken: refreshToken,
     })
-    .where(eq(userTable.id, userId))
+    .where(eq(userTable.userId, userId))
     .returning();
 
   return updatedUser;
@@ -164,7 +167,7 @@ const addForgotPasswordAndExpiryToken = async (
       forgotPasswordToken: forgotToken,
       forgotPasswordExpiry: forgotExpiry,
     })
-    .where(eq(userTable.id, userId))
+    .where(eq(userTable.userId, userId))
     .returning();
 
   return updateForgotPasswordToken;
@@ -193,7 +196,7 @@ const updateResetForgotPassword = async (userId, newPassword) => {
       forgotPasswordToken: null,
       forgotPasswordExpiry: null,
     })
-    .where(eq(userTable.id, userId))
+    .where(eq(userTable.userId, userId))
     .returning();
 
   return updatedUser;
@@ -203,7 +206,7 @@ const updatePassword = async (userId, password) => {
   const [user] = await db
     .update(userTable)
     .set({ password })
-    .where(eq(userTable.id, userId))
+    .where(eq(userTable.userId, userId))
     .returning();
 
   return user;
@@ -213,7 +216,7 @@ export {
   getUserByEmail,
   createUser,
   getHashedPassword,
-  getDefaultRoleId,
+  getDefaultRole,
   comparePassword,
   getUserByValidEmailVerificationToken,
   updateEmailVerified,

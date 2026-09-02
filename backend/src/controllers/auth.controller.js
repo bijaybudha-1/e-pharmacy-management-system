@@ -1,11 +1,12 @@
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+
 import {
   addForgotPasswordAndExpiryToken,
   comparePassword,
   createUser,
-  getDefaultRoleId,
+  getDefaultRole,
   getHashedPassword,
   getResetForgotPassword,
   getUserByEmail,
@@ -37,17 +38,17 @@ const userRegister = asyncHandler(async (req, res) => {
   const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
-    throw new ApiError(409, `User with email ${email} already exists!`);
+    throw new ApiError(409, `User with ${email} email is already registered`);
   }
 
   const hashedPassword = await getHashedPassword(password);
 
   const defaultFullName = email.split("@")[0];
 
-  const defaultUserRoleId = await getDefaultRoleId();
+  const defaultUserRoleId = await getDefaultRole();
 
-  if (!defaultUserRoleId) {
-    throw new ApiError(500, "Customer role is not found");
+  if (!defaultUserRoleId.roleId) {
+    throw new ApiError(500, "Customer role is not configured");
   }
 
   const {
@@ -60,7 +61,7 @@ const userRegister = asyncHandler(async (req, res) => {
     email,
     defaultFullName,
     hashedPassword,
-    defaultUserRoleId,
+    defaultUserRoleId.roleId,
     emailValidationToken,
     emailValidationTokenExpiry,
   );
@@ -87,6 +88,34 @@ const userRegister = asyncHandler(async (req, res) => {
       `${req.protocol}://${req.get("host")}/api/v1/auth/verify-email/${unHashedToken}`,
     ),
   });
+});
+
+const verifyEmail = asyncHandler(async (req, res) => {
+  const { verificationToken } = req.params;
+
+  if (!verificationToken) {
+    throw new ApiError(400, "Email Verification token is missing");
+  }
+
+  const hashedToken = getHashedToken(verificationToken);
+
+  const user = await getUserByValidEmailVerificationToken(hashedToken);
+
+  if (!user) {
+    throw new ApiError(400, "Invalid or expired email verification token");
+  }
+
+  const updatedUser = await updateEmailVerified(user.id);
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { verifyEmail: updatedUser.emailVerified },
+        "Email is verified",
+      ),
+    );
 });
 
 const userLogin = asyncHandler(async (req, res) => {
@@ -140,41 +169,6 @@ const userLogin = asyncHandler(async (req, res) => {
         200,
         { accessToken: accessToken },
         "User Login Successfully",
-      ),
-    );
-});
-
-const verifyEmail = asyncHandler(async (req, res) => {
-  const { verificationToken } = req.params;
-
-  if (!verificationToken) {
-    throw new ApiError(400, "Email Verification token is missing");
-  }
-
-  const hashedToken = getHashedToken(verificationToken);
-
-  const user = await getUserByValidEmailVerificationToken(hashedToken);
-
-  if (!user) {
-    throw new ApiError(400, "Invalid or expired email verification token");
-  }
-
-  if (
-    !user.emailValidationTokenExpiry ||
-    user.emailValidationTokenExpiry < new Date()
-  ) {
-    throw new ApiError(400, "Verification token has expired");
-  }
-
-  const updatedUser = await updateEmailVerified(user.id);
-
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(
-        200,
-        { verifyEmail: updatedUser.emailVerified },
-        "Email is verified",
       ),
     );
 });
