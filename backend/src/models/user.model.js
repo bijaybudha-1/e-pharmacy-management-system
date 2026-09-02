@@ -13,21 +13,21 @@ import { StatusEnum, AvailableStatus } from "../utils/constants.js";
 export const userStatusEnum = pgEnum("user_status", AvailableStatus);
 
 const userTable = pgTable("users", {
-  id: uuid("customer_id").primaryKey().defaultRandom(),
-  fullName: varchar("full_name", { length: 55 }).notNull(),
-  email: varchar({ length: 255 }).unique().notNull(),
-  phone: varchar("phone_number", { length: 20 }),
+  userId: uuid("user_id").primaryKey().defaultRandom(),
+  fullName: varchar("full_name", { length: 100 }).notNull(),
+  email: varchar({ length: 150 }).unique().notNull(),
+  phone: varchar("phone", { length: 20 }),
   password: text().notNull(),
   roleId: uuid("role_id")
-    .references(() => roleTable.id)
+    .references(() => roleTable.roleId)
     .notNull(),
-  status: userStatusEnum("user_status").notNull().default(StatusEnum.ACTIVE),
-  refreshToken: text("refresh_token"),
   emailVerified: boolean("email_verified").notNull().default(false),
-  emailValidationToken: text("email_validation_token"),
-  emailValidationTokenExpiry: timestamp("email_validation_token_Expiry"),
+  emailVerificationToken: text("email_verification_token"),
+  emailVerificationTokenExpiry: timestamp("email_verification_token_Expiry"),
+  refreshToken: text("refresh_token"),
   forgotPasswordToken: text("forgot_password_token"),
   forgotPasswordExpiry: timestamp("forgot_password_expiry"),
+  status: userStatusEnum("user_status").notNull().default(StatusEnum.INACTIVE),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .$onUpdate(() => new Date())

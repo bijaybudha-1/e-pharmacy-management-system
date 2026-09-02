@@ -5,7 +5,7 @@ import addressTable from "./address.model.js";
 const customersTable = pgTable("customers", {
   customerId: uuid("customer_id").primaryKey().defaultRandom(),
   userId: uuid("user_id")
-    .references(() => userTable.id)
+    .references(() => userTable.userId)
     .notNull(),
   defaultAddressId: uuid().references(() => addressTable.addressId),
   loyaltyPoints: numeric("loyalty_points").notNull().default("0"),
