@@ -26,4 +26,49 @@ const addAddressRequestBodySchema = z.object({
   isDefault: z.boolean().optional(),
 });
 
-export { addAddressRequestBodySchema };
+const updateAddressRequestBodySchema = z.object({
+  label: z.string().optional(),
+  fullName: z
+    .string()
+    .min(3, "Fullname must be at least 3 character")
+    .trim()
+    .optional(),
+  phone: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
+    .trim()
+    .optional(),
+  addressLine1: z
+    .string()
+    .min(5, "Address name must be at least 5 character")
+    .trim()
+    .optional(),
+  addressLine2: z
+    .string()
+    .min(5, "Address name must be at least 5 character")
+    .trim()
+    .optional(),
+  city: z
+    .string()
+    .min(4, "City name must be at least 4 character")
+    .trim()
+    .optional(),
+  state: z
+    .string()
+    .min(4, "State name must be at least 4 character")
+    .trim()
+    .optional(),
+  postalCode: z
+    .string()
+    .min(4, "Postal code must be at least 4 character")
+    .trim()
+    .optional(),
+  country: z
+    .string()
+    .min(4, "Country name must be at least 4 character")
+    .trim()
+    .optional(),
+  isDefault: z.boolean().optional(),
+});
+
+export { addAddressRequestBodySchema, updateAddressRequestBodySchema };
