@@ -3,6 +3,7 @@ import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {
   createAddress,
+  deleteAddressById,
   getAddressByIdAndUpdate,
   getAddressByUserId,
 } from "../services/address.service.js";
@@ -97,4 +98,18 @@ const updateAddress = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, address, "Address is updated"));
 });
 
-export { getOwnAddress, addAddress, updateAddress };
+const deleteAddress = asyncHandler(async (req, res) => {
+  const { addressId } = req.params;
+  const userId = req.user?.id;
+
+  if (!addressId) {
+    throw new ApiError(400, "Address id is missing or invalid");
+  }
+
+  await deleteAddressById(addressId, userId);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Address deleted successfully"));
+});
+export { getOwnAddress, addAddress, updateAddress, deleteAddress };

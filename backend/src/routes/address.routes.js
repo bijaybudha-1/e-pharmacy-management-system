@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   addAddress,
+  deleteAddress,
   getOwnAddress,
   updateAddress,
 } from "../controllers/address.controller.js";
@@ -25,5 +26,6 @@ router
     validate(updateAddressRequestBodySchema),
     updateAddress,
   );
+router.route("/:addressId").delete(authMiddleware, deleteAddress);
 
 export default router;
