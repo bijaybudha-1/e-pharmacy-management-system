@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import db from "../db/index.js";
 import { customersTable, addressesTable } from "../models/index.js";
 import { ApiError } from "../utils/apiError.js";
@@ -86,7 +86,6 @@ const getAddressByIdAndUpdate = async (
   postalCode,
   country,
 ) => {
-
   const [address] = await db
     .update(addressesTable)
     .set({
@@ -110,4 +109,39 @@ const getAddressByIdAndUpdate = async (
   return address;
 };
 
-export { getAddressByUserId, createAddress, getAddressByIdAndUpdate };
+const deleteAddressById = async (addressId, userId) => {
+  const [customer] = await db
+    .select({
+      customerId: customersTable.customerId,
+    })
+    .from(customersTable)
+    .where(eq(customersTable.userId, userId))
+    .limit(1);
+
+  if (!customer) {
+    throw new ApiError("404", "Customer ID is invalid or not found");
+  }
+
+  const [address] = await db
+    .delete(addressesTable)
+    .where(
+      and(
+        eq(addressesTable.addressId, addressId),
+        eq(addressesTable.customerId, customer.customerId),
+      ),
+    )
+    .returning();
+
+  if (!address) {
+    throw new ApiError("404", "Address ID is invalid or not found");
+  }
+
+  return customer;
+};
+
+export {
+  getAddressByUserId,
+  createAddress,
+  getAddressByIdAndUpdate,
+  deleteAddressById,
+};
