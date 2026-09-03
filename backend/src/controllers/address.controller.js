@@ -63,6 +63,7 @@ const addAddress = asyncHandler(async (req, res) => {
 
 const updateAddress = asyncHandler(async (req, res) => {
   const { addressId } = req.params;
+  const userId = req.user?.id;
 
   if (!addressId) {
     throw new ApiError(400, "Address id not match or missing");
@@ -82,6 +83,7 @@ const updateAddress = asyncHandler(async (req, res) => {
 
   const address = await getAddressByIdAndUpdate(
     addressId,
+    userId,
     label,
     fullName,
     phone,
