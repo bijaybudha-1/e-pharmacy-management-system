@@ -6,6 +6,7 @@ import {
   deleteAddressById,
   getAddressByIdAndUpdate,
   getAddressByUserId,
+  setDefaultAddress,
 } from "../services/address.service.js";
 
 const getOwnAddress = asyncHandler(async (req, res) => {
@@ -114,4 +115,39 @@ const deleteAddress = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, "Address deleted successfully"));
 });
-export { getOwnAddress, addAddress, updateAddress, deleteAddress };
+
+const setDefaultAddressController = asyncHandler(async (req, res) => {
+  const { addressId } = req.params;
+  const userId = req.user.id;
+
+  if (!addAddress) {
+    throw new ApiError(400, "Address id is missing or invalid");
+  }
+
+  const updatedAddress = await setDefaultAddress(addressId, userId);
+
+  if (!updateAddress) {
+    throw new ApiError(
+      404,
+      "Address not found or you are not authorized to modify it",
+    );
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        updatedAddress,
+        "Default address updated successfully",
+      ),
+    );
+});
+
+export {
+  getOwnAddress,
+  addAddress,
+  updateAddress,
+  deleteAddress,
+  setDefaultAddressController,
+};

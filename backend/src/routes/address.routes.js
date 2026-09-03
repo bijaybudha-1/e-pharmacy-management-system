@@ -3,6 +3,7 @@ import {
   addAddress,
   deleteAddress,
   getOwnAddress,
+  setDefaultAddressController,
   updateAddress,
 } from "../controllers/address.controller.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
@@ -27,5 +28,8 @@ router
     updateAddress,
   );
 router.route("/:addressId").delete(authMiddleware, deleteAddress);
+router
+  .route("/:addressId/default")
+  .put(authMiddleware, setDefaultAddressController);
 
 export default router;
