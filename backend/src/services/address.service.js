@@ -76,6 +76,7 @@ const createAddress = async (
 
 const getAddressByIdAndUpdate = async (
   addressId,
+  userId,
   label,
   fullName,
   phone,
@@ -86,6 +87,12 @@ const getAddressByIdAndUpdate = async (
   postalCode,
   country,
 ) => {
+  const [customer] = await db
+    .select()
+    .from(customersTable)
+    .where(eq(customersTable.userId, userId))
+    .limit(1);
+
   const [address] = await db
     .update(addressesTable)
     .set({
@@ -99,7 +106,12 @@ const getAddressByIdAndUpdate = async (
       postalCode,
       country,
     })
-    .where(eq(addressesTable.addressId, addressId))
+    .where(
+      and(
+        eq(addressesTable.addressId, addressId),
+        eq(addressesTable.customerId, customer.customerId),
+      ),
+    )
     .returning();
 
   if (!address) {
