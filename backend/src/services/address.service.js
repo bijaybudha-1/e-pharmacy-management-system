@@ -151,9 +151,67 @@ const deleteAddressById = async (addressId, userId) => {
   return customer;
 };
 
+const setDefaultAddress = async (addressId, userId) => {
+  return await db.transaction(async (tx) => {
+    const [customer] = await tx
+      .select({
+        customerId: customersTable.customerId,
+      })
+      .from(customersTable)
+      .where(eq(customersTable.userId, userId))
+      .limit(1);
+
+    if (!customer) {
+      throw new ApiError(404, "Customer id is missing or invalid");
+    }
+
+    const [address] = await tx
+      .select({
+        addressId: addressesTable.addressId,
+        isDefault: addressesTable.isDefault,
+      })
+      .from(addressesTable)
+      .where(
+        and(
+          eq(addressesTable.addressId, addressId),
+          eq(addressesTable.customerId, customer.customerId),
+        ),
+      )
+      .limit(1);
+
+    if (!address) {
+      throw new ApiError(404, "Address id is missing or invalid");
+    }
+
+    await tx
+      .update(addressesTable)
+      .set({ isDefault: false })
+      .where(eq(addressesTable.customerId, customer.customerId));
+
+    const [updatedAddress] = await tx
+      .update(addressesTable)
+      .set({ isDefault: true })
+      .where(
+        and(
+          eq(addressesTable.customerId, customer.customerId),
+          eq(addressesTable.addressId, addressId),
+        ),
+      )
+      .returning();
+
+    await tx
+      .update(customersTable)
+      .set({ defaultAddressId: addressId })
+      .where(eq(customersTable.customerId, customer.customerId));
+
+    return updatedAddress;
+  });
+};
+
 export {
   getAddressByUserId,
   createAddress,
   getAddressByIdAndUpdate,
   deleteAddressById,
+  setDefaultAddress,
 };
