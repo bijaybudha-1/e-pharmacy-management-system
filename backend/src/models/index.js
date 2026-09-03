@@ -3,6 +3,8 @@ import roleTable, { userRoleEnum } from "./role.model.js";
 import customersTable from "./customer.model.js";
 import addressesTable from "./address.model.js";
 import UserProfileTable, { genderEnum } from "./userProfile.model.js";
+import categoriesTable, { categoryStatusEnum } from "./categories.model.js";
+import medicineTable, { medicineStatusEnum } from "./medicine.model.js";
 
 export {
   userTable,
@@ -13,4 +15,8 @@ export {
   addressesTable,
   UserProfileTable,
   genderEnum,
+  categoriesTable,
+  categoryStatusEnum,
+  medicineTable,
+  medicineStatusEnum,
 };
