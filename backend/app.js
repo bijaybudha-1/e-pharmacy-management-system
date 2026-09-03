@@ -35,10 +35,12 @@ app.use(
 import healthCheckRoute from "./src/routes/healthCheck.routes.js";
 import authRoute from "./src/routes/auth.routes.js";
 import addressRoute from "./src/routes/address.routes.js";
+import catalogRoute from "./src/routes/catalog.routes.js";
 
 app.use("/api/v1/healthcheck", healthCheckRoute);
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/addresses", addressRoute);
+app.use("/api/v1/catalog", catalogRoute);
 
 app.get("/", (req, res) => {
   res.send("Welcome to E Pharmacy Management System");
