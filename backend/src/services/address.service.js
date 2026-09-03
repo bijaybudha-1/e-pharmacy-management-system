@@ -74,4 +74,40 @@ const createAddress = async (
   return address;
 };
 
-export { getAddressByUserId, createAddress };
+const getAddressByIdAndUpdate = async (
+  addressId,
+  label,
+  fullName,
+  phone,
+  addressLine1,
+  addressLine2,
+  city,
+  state,
+  postalCode,
+  country,
+) => {
+
+  const [address] = await db
+    .update(addressesTable)
+    .set({
+      label,
+      fullName,
+      phone,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      postalCode,
+      country,
+    })
+    .where(eq(addressesTable.addressId, addressId))
+    .returning();
+
+  if (!address) {
+    throw new ApiError(404, "Address not found");
+  }
+
+  return address;
+};
+
+export { getAddressByUserId, createAddress, getAddressByIdAndUpdate };
