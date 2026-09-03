@@ -3,6 +3,7 @@ import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {
   createAddress,
+  getAddressByIdAndUpdate,
   getAddressByUserId,
 } from "../services/address.service.js";
 
@@ -41,8 +42,6 @@ const addAddress = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Unauthorized: user authentication required");
   }
 
-  console.log("country:", country);
-  console.log("body:", req.body);
   const address = await createAddress(
     userId,
     label,
@@ -61,4 +60,41 @@ const addAddress = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, address, "Address added successfully"));
 });
 
-export { getOwnAddress, addAddress };
+const updateAddress = asyncHandler(async (req, res) => {
+  const { addressId } = req.params;
+
+  if (!addressId) {
+    throw new ApiError(400, "Address id not match or missing");
+  }
+
+  const {
+    label,
+    fullName,
+    phone,
+    addressLine1,
+    addressLine2,
+    city,
+    state,
+    postalCode,
+    country,
+  } = req.body;
+
+  const address = await getAddressByIdAndUpdate(
+    addressId,
+    label,
+    fullName,
+    phone,
+    addressLine1,
+    addressLine2,
+    city,
+    state,
+    postalCode,
+    country,
+  );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, address, "Address is updated"));
+});
+
+export { getOwnAddress, addAddress, updateAddress };
