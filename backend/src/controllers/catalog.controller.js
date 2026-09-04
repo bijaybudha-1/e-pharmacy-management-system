@@ -6,6 +6,7 @@ import {
   getByCategoryIdAndUpdate,
   getCategoryByName,
   insertCategory,
+  insertMedicine,
   listCategories,
   listMedicine,
 } from "../services/catalog.service.js";
@@ -103,10 +104,49 @@ const getAllMedicine = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, medicine, "Medicine fetched successfully"));
 });
 
+const createMedicine = asyncHandler(async (req, res) => {
+  const {
+    categoryName,
+    medicineName,
+    genericName,
+    description,
+    form,
+    manufacturer,
+    requiresPrescription,
+    minStock,
+    sellingPrice,
+    discountPrice,
+    status,
+  } = req.body;
+
+  const medicine = await insertMedicine(
+    categoryName,
+    medicineName,
+    genericName,
+    description,
+    form,
+    manufacturer,
+    requiresPrescription,
+    minStock,
+    sellingPrice,
+    discountPrice,
+    status,
+  );
+
+  if (!medicine) {
+    throw new ApiError(409, "Failed to create a medicine");
+  }
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, medicine, "Create a medicine successfully"));
+});
+
 export {
   getAllCategories,
   createCategories,
   updateCategory,
   deleteCategory,
   getAllMedicine,
+  createMedicine,
 };

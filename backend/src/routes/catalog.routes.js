@@ -1,6 +1,7 @@
 import Router from "express";
 import {
   createCategories,
+  createMedicine,
   deleteCategory,
   getAllCategories,
   getAllMedicine,
@@ -10,6 +11,7 @@ import { authMiddleware } from "../middlewares/auth.middlewares.js";
 import { validate } from "../middlewares/validator.middlewares.js";
 import {
   createCategoryRequestBodySchema,
+  createMedicineRequestBodySchema,
   updateCategoryRequestBodySchema,
 } from "../validators/catalog.validation.js";
 import { authorizeRole } from "../middlewares/role.middleware.js";
@@ -43,6 +45,15 @@ router
 router
   .route("/categories/:categoryId")
   .delete(authMiddleware, authorizeRole(["admin"]), deleteCategory);
+
+router
+  .route("/medicines")
+  .post(
+    authMiddleware,
+    authorizeRole(["admin"]),
+    validate(createMedicineRequestBodySchema),
+    createMedicine,
+  );
 
 // Protected Admin Medicine Categories
 export default router;
