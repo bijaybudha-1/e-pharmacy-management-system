@@ -50,9 +50,19 @@ const getByCategoryIdAndUpdate = async (
   return category;
 };
 
+const getByCategoryIdAndDelete = async (categoryId) => {
+  const [category] = await db
+    .delete(categoriesTable)
+    .where(eq(categoriesTable.categoryId, categoryId))
+    .returning({ categoryId: categoriesTable.categoryId });
+
+  return category;
+};
+
 export {
   listCategories,
   getCategoryByName,
   insertCategory,
   getByCategoryIdAndUpdate,
+  getByCategoryIdAndDelete,
 };
