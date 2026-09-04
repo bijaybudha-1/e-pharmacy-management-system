@@ -7,6 +7,7 @@ import {
   getCategoryByName,
   insertCategory,
   listCategories,
+  listMedicine,
 } from "../services/catalog.service.js";
 
 const getAllCategories = asyncHandler(async (req, res) => {
@@ -90,4 +91,22 @@ const deleteCategory = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, category, "Category deleted successfully"));
 });
 
-export { getAllCategories, createCategories, updateCategory, deleteCategory };
+const getAllMedicine = asyncHandler(async (req, res) => {
+  const medicine = await listMedicine();
+
+  if (!medicine) {
+    throw new ApiError(404, "Medicine not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, medicine, "Medicine fetched successfully"));
+});
+
+export {
+  getAllCategories,
+  createCategories,
+  updateCategory,
+  deleteCategory,
+  getAllMedicine,
+};
