@@ -8,10 +8,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { AvailableStatus, StatusEnum } from "../utils/constants.js";
 
-export const categoryStatusEnum = pgEnum("status", [
-  StatusEnum.ACTIVE,
-  StatusEnum.INACTIVE,
-]);
+export const categoryStatusEnum = pgEnum("status", AvailableStatus);
 
 const categoriesTable = pgTable("categories", {
   categoryId: uuid("category_id").primaryKey().defaultRandom(),
