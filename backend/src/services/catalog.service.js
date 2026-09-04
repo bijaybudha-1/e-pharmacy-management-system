@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import db from "../db/index.js";
 import { categoriesTable, medicineTable } from "../models/index.js";
+import { ApiError } from "../utils/apiError.js";
 
 const listCategories = async () => {
   return await db.select().from(categoriesTable);
@@ -64,6 +65,49 @@ const listMedicine = async () => {
   return medicine;
 };
 
+const insertMedicine = async (
+  categoryName,
+  medicineName,
+  genericName,
+  description,
+  form,
+  manufacturer,
+  requiresPrescription,
+  minStock,
+  sellingPrice,
+  discountPrice,
+  status,
+) => {
+  const [category] = await db
+    .select({
+      categoryId: categoriesTable.categoryId,
+    })
+    .from(categoriesTable)
+    .where(eq(categoriesTable.categoryName, categoryName))
+    .limit(1);
+
+  const categoryId = category.categoryId;
+
+  const [medicine] = await db
+    .insert(medicineTable)
+    .values({
+      categoryId,
+      medicineName,
+      genericName,
+      description,
+      form,
+      manufacturer,
+      requiresPrescription,
+      minStock,
+      sellingPrice,
+      discountPrice,
+      status,
+    })
+    .returning();
+
+  return medicine;
+};
+
 export {
   listCategories,
   getCategoryByName,
@@ -71,4 +115,5 @@ export {
   getByCategoryIdAndUpdate,
   getByCategoryIdAndDelete,
   listMedicine,
+  insertMedicine,
 };
