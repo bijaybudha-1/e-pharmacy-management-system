@@ -31,4 +31,28 @@ const insertCategory = async (categoryName, description, categoryStatus) => {
   return category;
 };
 
-export { listCategories, getCategoryByName, insertCategory };
+const getByCategoryIdAndUpdate = async (
+  categoryId,
+  categoryName,
+  description,
+  categoryStatus,
+) => {
+  const [category] = await db
+    .update(categoriesTable)
+    .set({
+      categoryName,
+      description,
+      categoryStatus,
+    })
+    .where(eq(categoriesTable.categoryId, categoryId))
+    .returning({ categoryId: categoriesTable.categoryId });
+
+  return category;
+};
+
+export {
+  listCategories,
+  getCategoryByName,
+  insertCategory,
+  getByCategoryIdAndUpdate,
+};
