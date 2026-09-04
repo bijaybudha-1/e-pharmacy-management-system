@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import {
+  getByCategoryIdAndDelete,
   getByCategoryIdAndUpdate,
   getCategoryByName,
   insertCategory,
@@ -68,4 +69,25 @@ const updateCategory = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, category, "Category is updated successfully"));
 });
 
-export { getAllCategories, createCategories, updateCategory };
+const deleteCategory = asyncHandler(async (req, res) => {
+  const { categoryId } = req.params;
+
+  if (!categoryId) {
+    throw new ApiError(400, "CategoryId is missing or invalid");
+  }
+
+  console.log("CategoryID: ", categoryId);
+
+  const category = await getByCategoryIdAndDelete(categoryId);
+  console.log("Category: ", category);
+
+  if (!category) {
+    throw new ApiError(404, "Category not found");
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, category, "Category deleted successfully"));
+});
+
+export { getAllCategories, createCategories, updateCategory, deleteCategory };

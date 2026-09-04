@@ -1,6 +1,7 @@
 import Router from "express";
 import {
   createCategories,
+  deleteCategory,
   getAllCategories,
   updateCategory,
 } from "../controllers/catalog.controller.js";
@@ -34,5 +35,9 @@ router
     validate(updateCategoryRequestBodySchema),
     updateCategory,
   );
+
+router
+  .route("/categories/:categoryId")
+  .delete(authMiddleware, authorizeRole(["admin"]), deleteCategory);
 
 export default router;
