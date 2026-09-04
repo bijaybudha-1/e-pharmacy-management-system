@@ -26,8 +26,6 @@ const createCategories = asyncHandler(async (req, res) => {
 
   const existingCategory = await getCategoryByName(categoryName);
 
-  console.log(existingCategory);
-
   if (existingCategory) {
     throw new ApiError(409, `${categoryName} category is already exists`);
   }
@@ -42,7 +40,9 @@ const createCategories = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Failed to create categories");
   }
 
-  res.status(201).json(new ApiResponse(201, "Create a category successfully"));
+  res
+    .status(201)
+    .json(new ApiResponse(201, categories, "Create a category successfully"));
 });
 
 const updateCategory = asyncHandler(async (req, res) => {
