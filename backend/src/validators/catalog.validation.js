@@ -24,6 +24,11 @@ const updateCategoryRequestBodySchema = z.object({
 });
 
 const createMedicineRequestBodySchema = z.object({
+  categoryName: z
+    .string()
+    .trim()
+    .min(5, "Medicine name must be at least 4 character")
+    .max(100, "Medicine name must not exceed 100 characters"),
   medicineName: z
     .string()
     .trim()
