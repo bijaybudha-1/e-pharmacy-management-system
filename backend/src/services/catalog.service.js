@@ -59,10 +59,16 @@ const getByCategoryIdAndDelete = async (categoryId) => {
   return category;
 };
 
+const listMedicine = async () => {
+  const [medicine] = await db.select().from(medicineTable);
+  return medicine;
+};
+
 export {
   listCategories,
   getCategoryByName,
   insertCategory,
   getByCategoryIdAndUpdate,
   getByCategoryIdAndDelete,
+  listMedicine,
 };
