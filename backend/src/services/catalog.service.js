@@ -18,4 +18,17 @@ const getCategoryByName = async (categoryName) => {
   return category;
 };
 
-export { listCategories, getCategoryByName };
+const insertCategory = async (categoryName, description, categoryStatus) => {
+  const [category] = await db
+    .insert(categoriesTable)
+    .values({
+      categoryName,
+      description,
+      categoryStatus,
+    })
+    .returning();
+
+  return category;
+};
+
+export { listCategories, getCategoryByName, insertCategory };
