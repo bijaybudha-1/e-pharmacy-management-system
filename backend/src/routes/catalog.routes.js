@@ -1,8 +1,20 @@
 import Router from "express";
-import { getAllCategories } from "../controllers/catalog.controller.js";
-
+import {
+  createCategories,
+  getAllCategories,
+} from "../controllers/catalog.controller.js";
+import { authMiddleware } from "../middlewares/auth.middlewares.js";
+import { validate } from "../middlewares/validator.middlewares.js";
+import { createCategoryRequestBodySchema } from "../validators/catalog.validation.js";
 const router = Router();
 
 router.route("/categories").get(getAllCategories);
+router
+  .route("/categories")
+  .post(
+    authMiddleware,
+    validate(createCategoryRequestBodySchema),
+    createCategories,
+  );
 
 export default router;
