@@ -151,6 +151,15 @@ const getByMedicineIdAndUpdate = async (
   return medicine;
 };
 
+const getByMedicineIdAndDelete = async (medicineId) => {
+  const [medicine] = await db
+    .delete(medicineTable)
+    .where(eq(medicineTable.medicineId, medicineId))
+    .returning({ medicineId: medicineTable.medicineId });
+
+  return medicine;
+};
+
 export {
   listCategories,
   getCategoryByName,
@@ -161,4 +170,5 @@ export {
   insertMedicine,
   getMedicineById,
   getByMedicineIdAndUpdate,
+  getByMedicineIdAndDelete,
 };
