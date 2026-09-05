@@ -61,7 +61,7 @@ const getByCategoryIdAndDelete = async (categoryId) => {
 };
 
 const listMedicine = async () => {
-  const [medicine] = await db.select().from(medicineTable);
+  const medicine = await db.select().from(medicineTable);
   return medicine;
 };
 
