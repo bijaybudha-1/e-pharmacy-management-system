@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import {
   getByCategoryIdAndDelete,
   getByCategoryIdAndUpdate,
+  getByMedicineIdAndUpdate,
   getCategoryByName,
   getMedicineById,
   insertCategory,
@@ -11,6 +12,7 @@ import {
   listCategories,
   listMedicine,
 } from "../services/catalog.service.js";
+import { medicineIdSchema } from "../validators/catalog.validation.js";
 
 const getAllCategories = asyncHandler(async (req, res) => {
   const categories = await listCategories();
@@ -82,7 +84,6 @@ const deleteCategory = asyncHandler(async (req, res) => {
   console.log("CategoryID: ", categoryId);
 
   const category = await getByCategoryIdAndDelete(categoryId);
-  console.log("Category: ", category);
 
   if (!category) {
     throw new ApiError(404, "Category not found");
@@ -166,6 +167,49 @@ const medicineDetails = asyncHandler(async (req, res) => {
   }
 });
 
+const updateMedicine = asyncHandler(async (req, res) => {
+  const { medicineId } = req.params;
+  const result = medicineIdSchema.safeParse({ medicineId });
+  const {
+    medicineName,
+    genericName,
+    description,
+    form,
+    manufacturer,
+    requiresPrescription,
+    minStock,
+    sellingPrice,
+    discountPrice,
+    status,
+  } = req.body;
+
+  if (!result.success) {
+    throw new ApiError(400, "Medicine id is missing or invalid");
+  }
+
+  const medicine = await getByMedicineIdAndUpdate(
+    medicineId,
+    medicineName,
+    genericName,
+    description,
+    form,
+    manufacturer,
+    requiresPrescription,
+    minStock,
+    sellingPrice,
+    discountPrice,
+    status,
+  );
+
+  if (!medicine) {
+    throw new ApiError(404, "Medicine failed to update");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, medicine, "Medicine updated successfully"));
+});
+
 export {
   getAllCategories,
   createCategories,
@@ -174,4 +218,5 @@ export {
   getAllMedicine,
   createMedicine,
   medicineDetails,
+  updateMedicine,
 };

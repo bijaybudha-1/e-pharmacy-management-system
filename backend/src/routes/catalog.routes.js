@@ -7,6 +7,7 @@ import {
   getAllMedicine,
   medicineDetails,
   updateCategory,
+  updateMedicine,
 } from "../controllers/catalog.controller.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 import { validate } from "../middlewares/validator.middlewares.js";
@@ -14,6 +15,7 @@ import {
   createCategoryRequestBodySchema,
   createMedicineRequestBodySchema,
   updateCategoryRequestBodySchema,
+  updateMedicineRequestBodySchema,
 } from "../validators/catalog.validation.js";
 import { authorizeRole } from "../middlewares/role.middleware.js";
 const router = Router();
@@ -56,5 +58,14 @@ router
     authorizeRole(["admin"]),
     validate(createMedicineRequestBodySchema),
     createMedicine,
+  );
+
+router
+  .route("/medicines/:medicineId")
+  .patch(
+    authMiddleware,
+    authorizeRole(["admin"]),
+    validate(updateMedicineRequestBodySchema),
+    updateMedicine,
   );
 export default router;
