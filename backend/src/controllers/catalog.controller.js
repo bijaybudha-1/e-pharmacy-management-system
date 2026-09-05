@@ -5,6 +5,7 @@ import {
   getByCategoryIdAndDelete,
   getByCategoryIdAndUpdate,
   getCategoryByName,
+  getMedicineById,
   insertCategory,
   insertMedicine,
   listCategories,
@@ -142,6 +143,29 @@ const createMedicine = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, medicine, "Create a medicine successfully"));
 });
 
+const medicineDetails = asyncHandler(async (req, res) => {
+  const { medicineId } = req.params;
+
+  if (!medicineId) {
+    throw new ApiError(400, "Medicine ID is missing or invalid");
+  }
+
+  try {
+    const medicine = await getMedicineById(medicineId);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          medicine,
+          "Medicine details data fetched successfully",
+        ),
+      );
+  } catch (error) {
+    throw new ApiError(409, "Medicine Details not found");
+  }
+});
+
 export {
   getAllCategories,
   createCategories,
@@ -149,4 +173,5 @@ export {
   deleteCategory,
   getAllMedicine,
   createMedicine,
+  medicineDetails,
 };

@@ -5,6 +5,7 @@ import {
   deleteCategory,
   getAllCategories,
   getAllMedicine,
+  medicineDetails,
   updateCategory,
 } from "../controllers/catalog.controller.js";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
@@ -22,6 +23,7 @@ router.route("/categories").get(getAllCategories);
 
 // Public Medicine Route
 router.route("/medicines").get(getAllMedicine);
+router.route("/medicines/:medicineId").get(medicineDetails);
 
 // Protected Admin Categories Route
 router
@@ -46,6 +48,7 @@ router
   .route("/categories/:categoryId")
   .delete(authMiddleware, authorizeRole(["admin"]), deleteCategory);
 
+// Protected Admin Medicine Route
 router
   .route("/medicines")
   .post(
@@ -54,6 +57,4 @@ router
     validate(createMedicineRequestBodySchema),
     createMedicine,
   );
-
-// Protected Admin Medicine Categories
 export default router;
