@@ -12,7 +12,10 @@ import {
   listCategories,
   listMedicine,
 } from "../services/catalog.service.js";
-import { medicineIdSchema } from "../validators/catalog.validation.js";
+import {
+  categoryIdSchema,
+  medicineIdSchema,
+} from "../validators/catalog.validation.js";
 
 const getAllCategories = asyncHandler(async (req, res) => {
   const categories = await listCategories();
@@ -52,9 +55,10 @@ const createCategories = asyncHandler(async (req, res) => {
 
 const updateCategory = asyncHandler(async (req, res) => {
   const { categoryId } = req.params;
+  const result = categoryIdSchema.safeParse({ categoryId });
   const { categoryName, description, categoryStatus } = req.body;
 
-  if (!categoryId) {
+  if (!result.success) {
     throw new ApiError(400, "CategoryId is missing or invalid");
   }
 
@@ -66,7 +70,7 @@ const updateCategory = asyncHandler(async (req, res) => {
   );
 
   if (!category) {
-    throw new ApiError(404, "CategoryId is doesn't exists");
+    throw new ApiError(404, "Category not found");
   }
 
   return res
@@ -76,12 +80,11 @@ const updateCategory = asyncHandler(async (req, res) => {
 
 const deleteCategory = asyncHandler(async (req, res) => {
   const { categoryId } = req.params;
+  const result = categoryIdSchema.safeParse({ categoryId });
 
-  if (!categoryId) {
+  if (!result.success) {
     throw new ApiError(400, "CategoryId is missing or invalid");
   }
-
-  console.log("CategoryID: ", categoryId);
 
   const category = await getByCategoryIdAndDelete(categoryId);
 
@@ -146,8 +149,9 @@ const createMedicine = asyncHandler(async (req, res) => {
 
 const medicineDetails = asyncHandler(async (req, res) => {
   const { medicineId } = req.params;
+  const result = medicineIdSchema.safeParse({ medicineId });
 
-  if (!medicineId) {
+  if (!result.success) {
     throw new ApiError(400, "Medicine ID is missing or invalid");
   }
 

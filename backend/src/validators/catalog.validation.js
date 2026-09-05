@@ -139,8 +139,13 @@ const medicineIdSchema = z.object({
   medicineId: z.string().uuid(),
 });
 
+const categoryIdSchema = z.object({
+  categoryId: z.string().uuid(),
+});
+
 export {
   medicineIdSchema,
+  categoryIdSchema,
   createCategoryRequestBodySchema,
   updateCategoryRequestBodySchema,
   createMedicineRequestBodySchema,
