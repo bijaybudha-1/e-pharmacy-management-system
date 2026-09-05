@@ -108,6 +108,16 @@ const insertMedicine = async (
   return medicine;
 };
 
+const getMedicineById = async (medicineId) => {
+  const [medicine] = await db
+    .select()
+    .from(medicineTable)
+    .where(eq(medicineTable.medicineId, medicineId))
+    .limit(1);
+
+  return medicine;
+};
+
 export {
   listCategories,
   getCategoryByName,
@@ -116,4 +126,5 @@ export {
   getByCategoryIdAndDelete,
   listMedicine,
   insertMedicine,
+  getMedicineById,
 };
