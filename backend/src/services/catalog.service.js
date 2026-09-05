@@ -118,6 +118,39 @@ const getMedicineById = async (medicineId) => {
   return medicine;
 };
 
+const getByMedicineIdAndUpdate = async (
+  medicineId,
+  medicineName,
+  genericName,
+  description,
+  form,
+  manufacturer,
+  requiresPrescription,
+  minStock,
+  sellingPrice,
+  discountPrice,
+  status,
+) => {
+  const [medicine] = await db
+    .update(medicineTable)
+    .set({
+      medicineName,
+      genericName,
+      description,
+      form,
+      manufacturer,
+      requiresPrescription,
+      minStock,
+      sellingPrice,
+      discountPrice,
+      status,
+    })
+    .where(eq(medicineTable.medicineId, medicineId))
+    .returning();
+
+  return medicine;
+};
+
 export {
   listCategories,
   getCategoryByName,
@@ -127,4 +160,5 @@ export {
   listMedicine,
   insertMedicine,
   getMedicineById,
+  getByMedicineIdAndUpdate,
 };
