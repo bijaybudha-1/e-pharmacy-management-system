@@ -3,6 +3,7 @@ import {
   createCategories,
   createMedicine,
   deleteCategory,
+  deleteMedicine,
   getAllCategories,
   getAllMedicine,
   medicineDetails,
@@ -68,4 +69,8 @@ router
     validate(updateMedicineRequestBodySchema),
     updateMedicine,
   );
+
+router
+  .route("/medicines/:medicineId")
+  .delete(authMiddleware, authorizeRole(["admin"]), deleteMedicine);
 export default router;

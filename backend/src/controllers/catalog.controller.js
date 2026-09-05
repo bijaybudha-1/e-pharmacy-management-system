@@ -4,6 +4,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import {
   getByCategoryIdAndDelete,
   getByCategoryIdAndUpdate,
+  getByMedicineIdAndDelete,
   getByMedicineIdAndUpdate,
   getCategoryByName,
   getMedicineById,
@@ -214,6 +215,25 @@ const updateMedicine = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, medicine, "Medicine updated successfully"));
 });
 
+const deleteMedicine = asyncHandler(async (req, res) => {
+  const { medicineId } = req.params;
+  const result = medicineIdSchema.safeParse({ medicineId });
+
+  if (!result.success) {
+    throw new ApiError(400, "MedicineId is missing or invalid");
+  }
+
+  const medicine = await getByMedicineIdAndDelete(medicineId);
+
+  if (!medicine) {
+    throw new ApiError(404, "Medicine not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, medicine, "Medicine delete successfully"));
+});
+
 export {
   getAllCategories,
   createCategories,
@@ -223,4 +243,5 @@ export {
   createMedicine,
   medicineDetails,
   updateMedicine,
+  deleteMedicine
 };
