@@ -5,6 +5,7 @@ import { validate } from "../middlewares/validator.middlewares.js";
 import {
   getOwnPrescription,
   getPrescription,
+  pendingPrescription,
   uploadPrescription,
 } from "../controllers/prescription.controller.js";
 import { uploadPrescriptionRequestBodySchema } from "../validators/prescriptions.validation.js";
@@ -26,6 +27,10 @@ router
   .get(authMiddleware, authorizeRole(["customer"]), getOwnPrescription);
 
 // Protected Customer, Admin, Pharmacist, and Customer
+router
+  .route("/pending")
+  .get(authMiddleware, authorizeRole(["pharmacist"]), pendingPrescription);
+
 router
   .route("/:prescriptionId")
   .get(

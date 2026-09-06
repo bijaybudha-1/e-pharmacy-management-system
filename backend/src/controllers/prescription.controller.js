@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import {
+  getPendingPrescription,
   getPrescriptionByCustomerId,
   getPrescriptionById,
   insertPrescription,
@@ -83,4 +84,27 @@ const getPrescription = asyncHandler(async (req, res) => {
     );
 });
 
-export { uploadPrescription, getOwnPrescription, getPrescription };
+const pendingPrescription = asyncHandler(async (req, res) => {
+  const prescription = await getPendingPrescription();
+
+  if (!prescription) {
+    throw new ApiError(404, "pending_review prescription not found");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        prescription,
+        "pending prescription fetched successfully ",
+      ),
+    );
+});
+
+export {
+  uploadPrescription,
+  getOwnPrescription,
+  getPrescription,
+  pendingPrescription,
+};
