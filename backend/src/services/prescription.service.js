@@ -65,9 +65,20 @@ const getPendingPrescription = async () => {
   return prescription;
 };
 
+const verifyPrescriptionById = async (prescriptionId, status) => {
+  const [prescription] = await db
+    .update(prescriptionTable)
+    .set({ status })
+    .where(eq(prescriptionTable.prescriptionId, prescriptionId))
+    .returning();
+
+  return prescription;
+};
+
 export {
   insertPrescription,
   getPrescriptionByCustomerId,
   getPrescriptionById,
   getPendingPrescription,
+  verifyPrescriptionById,
 };
