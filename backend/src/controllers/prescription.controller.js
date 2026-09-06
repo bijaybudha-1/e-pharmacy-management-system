@@ -1,7 +1,10 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
-import { insertPrescription } from "../services/prescription.service.js";
+import {
+  getPrescriptionByCustomerId,
+  insertPrescription,
+} from "../services/prescription.service.js";
 
 const uploadPrescription = asyncHandler(async (req, res) => {
   const userId = req.user.id;
@@ -33,4 +36,27 @@ const uploadPrescription = asyncHandler(async (req, res) => {
     );
 });
 
-export { uploadPrescription };
+const getOwnPrescription = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+
+  if (!userId) {
+    throw new ApiError(400, "UserId is missing or invalid");
+  }
+
+  const prescription = await getPrescriptionByCustomerId(userId);
+
+  if (!prescription) {
+    throw new ApiError(404, "prescription not found");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        prescription,
+        "customer prescription fetched successfully",
+      ),
+    );
+});
+export { uploadPrescription, getOwnPrescription };

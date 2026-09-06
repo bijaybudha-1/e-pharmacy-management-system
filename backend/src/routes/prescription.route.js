@@ -2,7 +2,10 @@ import Router from "express";
 import { authMiddleware } from "../middlewares/auth.middlewares.js";
 import { authorizeRole } from "../middlewares/role.middleware.js";
 import { validate } from "../middlewares/validator.middlewares.js";
-import { uploadPrescription } from "../controllers/prescription.controller.js";
+import {
+  getOwnPrescription,
+  uploadPrescription,
+} from "../controllers/prescription.controller.js";
 import { uploadPrescriptionRequestBodySchema } from "../validators/prescriptions.validation.js";
 
 const router = Router();
@@ -16,5 +19,9 @@ router
     validate(uploadPrescriptionRequestBodySchema),
     uploadPrescription,
   );
+
+router
+  .route("/")
+  .get(authMiddleware, authorizeRole(["customer"]), getOwnPrescription);
 
 export default router;
