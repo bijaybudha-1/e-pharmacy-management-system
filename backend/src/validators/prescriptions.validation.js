@@ -26,4 +26,16 @@ const prescriptionIdSchema = z.object({
   prescriptionId: z.string().uuid(),
 });
 
-export { uploadPrescriptionRequestBodySchema, prescriptionIdSchema };
+const verifyPrescriptionRequestBodySchema = z.object({
+  status: z.enum([
+    PrescriptionStatusEnum.APPROVED,
+    PrescriptionStatusEnum.REJECT,
+    PrescriptionStatusEnum.UNDER_REVIEW,
+  ]),
+});
+
+export {
+  uploadPrescriptionRequestBodySchema,
+  prescriptionIdSchema,
+  verifyPrescriptionRequestBodySchema,
+};
