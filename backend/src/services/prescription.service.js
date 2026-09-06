@@ -1,6 +1,6 @@
 import { prescriptionTable, customersTable } from "../models/index.js";
 import db from "../db/index.js";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { ApiError } from "../utils/apiError.js";
 
 const insertPrescription = async (userId, prescriptionImage, notes, status) => {
@@ -29,4 +29,21 @@ const insertPrescription = async (userId, prescriptionImage, notes, status) => {
   });
 };
 
-export { insertPrescription };
+const getPrescriptionByCustomerId = async (userId) => {
+  return await db.transaction(async (tx) => {
+    const [customer] = await tx
+      .select()
+      .from(customersTable)
+      .where(eq(customersTable.userId, userId))
+      .limit(1);
+
+    const prescription = await tx
+      .select()
+      .from(prescriptionTable)
+      .where(eq(prescriptionTable.customerId, customer.customerId));
+
+    return prescription;
+  });
+};
+
+export { insertPrescription, getPrescriptionByCustomerId };
