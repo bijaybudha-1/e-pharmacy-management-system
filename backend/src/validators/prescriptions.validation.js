@@ -22,4 +22,8 @@ const uploadPrescriptionRequestBodySchema = z.object({
     .default(PrescriptionStatusEnum.PENDING_REVIEW),
 });
 
-export { uploadPrescriptionRequestBodySchema };
+const prescriptionIdSchema = z.object({
+  prescriptionId: z.string().uuid(),
+});
+
+export { uploadPrescriptionRequestBodySchema, prescriptionIdSchema };
