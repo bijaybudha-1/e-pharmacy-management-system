@@ -46,4 +46,14 @@ const getPrescriptionByCustomerId = async (userId) => {
   });
 };
 
-export { insertPrescription, getPrescriptionByCustomerId };
+const getPrescriptionById = async (prescriptionId) => {
+  const [prescription] = await db
+    .select()
+    .from(prescriptionTable)
+    .where(eq(prescriptionTable.prescriptionId, prescriptionId))
+    .limit(1);
+
+  return prescription;
+};
+
+export { insertPrescription, getPrescriptionByCustomerId, getPrescriptionById };
