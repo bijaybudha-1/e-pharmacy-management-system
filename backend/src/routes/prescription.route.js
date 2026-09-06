@@ -7,8 +7,12 @@ import {
   getPrescription,
   pendingPrescription,
   uploadPrescription,
+  verifyPrescription,
 } from "../controllers/prescription.controller.js";
-import { uploadPrescriptionRequestBodySchema } from "../validators/prescriptions.validation.js";
+import {
+  uploadPrescriptionRequestBodySchema,
+  verifyPrescriptionRequestBodySchema,
+} from "../validators/prescriptions.validation.js";
 
 const router = Router();
 
@@ -37,6 +41,15 @@ router
     authMiddleware,
     authorizeRole(["customer", "admin", "pharmacist"]),
     getPrescription,
+  );
+
+router
+  .route("/:prescriptionId/verify")
+  .post(
+    authMiddleware,
+    authorizeRole(["pharmacist"]),
+    validate(verifyPrescriptionRequestBodySchema),
+    verifyPrescription,
   );
 
 export default router;

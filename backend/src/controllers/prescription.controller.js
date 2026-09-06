@@ -6,6 +6,7 @@ import {
   getPrescriptionByCustomerId,
   getPrescriptionById,
   insertPrescription,
+  verifyPrescriptionById,
 } from "../services/prescription.service.js";
 import { prescriptionIdSchema } from "../validators/prescriptions.validation.js";
 
@@ -102,9 +103,36 @@ const pendingPrescription = asyncHandler(async (req, res) => {
     );
 });
 
+const verifyPrescription = asyncHandler(async (req, res) => {
+  const { prescriptionId } = req.params;
+  const { status } = req.body;
+  const result = prescriptionIdSchema.safeParse({ prescriptionId });
+
+  if (!result.success) {
+    throw new ApiError(400, "prescriptionId is missing or invalid");
+  }
+
+  const prescription = await verifyPrescriptionById(prescriptionId, status);
+
+  if (!prescription) {
+    throw new ApiError(404, "Pending prescription not found");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        prescription,
+        `Prescription has been ${prescription.status} successfully`,
+      ),
+    );
+});
+
 export {
   uploadPrescription,
   getOwnPrescription,
   getPrescription,
   pendingPrescription,
+  verifyPrescription,
 };
