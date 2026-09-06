@@ -1,6 +1,6 @@
 import { prescriptionTable, customersTable } from "../models/index.js";
 import db from "../db/index.js";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { ApiError } from "../utils/apiError.js";
 
 const insertPrescription = async (userId, prescriptionImage, notes, status) => {
@@ -56,4 +56,18 @@ const getPrescriptionById = async (prescriptionId) => {
   return prescription;
 };
 
-export { insertPrescription, getPrescriptionByCustomerId, getPrescriptionById };
+const getPendingPrescription = async () => {
+  const prescription = await db
+    .select()
+    .from(prescriptionTable)
+    .where(eq(prescriptionTable.status, "pending_review"));
+
+  return prescription;
+};
+
+export {
+  insertPrescription,
+  getPrescriptionByCustomerId,
+  getPrescriptionById,
+  getPendingPrescription,
+};
