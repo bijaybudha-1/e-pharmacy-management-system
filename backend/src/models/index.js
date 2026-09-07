@@ -5,6 +5,14 @@ import addressesTable from "./address.model.js";
 import UserProfileTable, { genderEnum } from "./userProfile.model.js";
 import categoriesTable, { categoryStatusEnum } from "./categories.model.js";
 import medicineTable, { medicineStatusEnum } from "./medicine.model.js";
+import prescriptionTable, {
+  prescriptionStatusEnum,
+} from "./prescription.model.js";
+import ordersTable, {
+  orderStatusEnum,
+  paymentStatusEnum,
+  paymentMethodEnum,
+} from "./order.model.js";
 
 export {
   userTable,
@@ -19,4 +27,10 @@ export {
   categoryStatusEnum,
   medicineTable,
   medicineStatusEnum,
+  prescriptionTable,
+  prescriptionStatusEnum,
+  ordersTable,
+  paymentMethodEnum,
+  paymentStatusEnum,
+  orderStatusEnum,
 };
