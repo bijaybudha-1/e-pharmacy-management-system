@@ -43,7 +43,9 @@ const ordersTable = pgTable("orders", {
   orderStatus: orderStatusEnum("order_status")
     .notNull()
     .default(OrderStatusEnum.PENDING),
-  totalAmount: numeric("total_amount").default(0).notNull(),
+  totalAmount: numeric("total_amount", { precision: 10, scale: 2 })
+    .default(0)
+    .notNull(),
   paymentMethod: paymentMethodEnum("payment_method")
     .notNull()
     .default(PaymentMethodEnum.CASH_ON_DELIVERY),
