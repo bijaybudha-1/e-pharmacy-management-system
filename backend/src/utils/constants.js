@@ -32,6 +32,31 @@ export const GenderEnum = {
   OTHER: "other",
 };
 
+export const OrderStatusEnum = {
+  PENDING: "pending",
+  CONFIRMED: "confirmed",
+  PACKED: "packed",
+  SHIPPED: "shipped",
+  DELIVERED: "delivered",
+  CANCELLED: "cancelled",
+  RETURNED: "returned",
+};
+
+export const PaymentStatusEnum = {
+  PENDING: "pending",
+  PAID: "paid",
+  FAILED: "failed",
+  REFUNDED: "refunded",
+};
+
+export const PaymentMethodEnum = {
+  CASH_ON_DELIVERY: "cash_on_delivery",
+  KhALTI: "khalti",
+  ESEWA: "esewa",
+  CARD: "card",
+  BANK_TRANSFER: "bank_transfer",
+};
+
 export const AvailableUserRole = Object.values(UserRoleEnum);
 export const AvailablePrescriptionStatus = Object.values(
   PrescriptionStatusEnum,
@@ -39,3 +64,6 @@ export const AvailablePrescriptionStatus = Object.values(
 export const AvailableStatus = Object.values(StatusEnum);
 export const AvailableMedicineStatus = Object.values(MedicineStatusEnum);
 export const AvailableGender = Object.values(GenderEnum);
+export const AvailableOrderStatus = Object.values(OrderStatusEnum);
+export const AvailablePaymentStatusEnum = Object.values(PaymentStatusEnum);
+export const AvailablePaymentMethodEnum = Object.values(PaymentMethodEnum);
