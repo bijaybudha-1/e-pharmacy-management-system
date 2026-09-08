@@ -21,6 +21,10 @@ import purchaseOrderItem from "./purchaseOrderItem.model.js";
 import medicineBatchTable, {
   medicineBatchStatusEnum,
 } from "./medicineBatch.model.js";
+import stockTransactionTable, {
+  stockReferenceTypeEnum,
+  stockTxnTypeEnum,
+} from "./stockTransaction.model.js";
 
 export {
   userTable,
@@ -48,4 +52,7 @@ export {
   purchaseOrderItem,
   medicineBatchTable,
   medicineBatchStatusEnum,
+  stockTransactionTable,
+  stockReferenceTypeEnum,
+  stockTxnTypeEnum,
 };
