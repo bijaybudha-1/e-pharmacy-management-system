@@ -63,6 +63,12 @@ export const MedicineBatchStatusEnum = {
   DEPLETED: "depleted",
 };
 
+export const PurchaseOrderStatusEnum = {
+  PENDING: "pending",
+  RECEIVED: "received",
+  CANCELED: "canceled",
+};
+
 export const AvailableUserRole = Object.values(UserRoleEnum);
 export const AvailablePrescriptionStatus = Object.values(
   PrescriptionStatusEnum,
@@ -76,3 +82,4 @@ export const AvailablePaymentMethodEnum = Object.values(PaymentMethodEnum);
 export const AvailableMedicineBatchStatusEnum = Object.values(
   MedicineBatchStatusEnum,
 );
+export const AvailablePurchaseStatus = Object.values(PurchaseOrderStatusEnum);
