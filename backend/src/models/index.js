@@ -13,6 +13,7 @@ import ordersTable, {
   paymentStatusEnum,
   paymentMethodEnum,
 } from "./order.model.js";
+import suppliersTable, { supplierEnumStatus } from "./supplier.mode.js";
 
 export {
   userTable,
@@ -33,4 +34,6 @@ export {
   paymentMethodEnum,
   paymentStatusEnum,
   orderStatusEnum,
+  suppliersTable,
+  supplierEnumStatus,
 };
