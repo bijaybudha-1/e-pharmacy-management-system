@@ -69,6 +69,19 @@ export const PurchaseOrderStatusEnum = {
   CANCELED: "canceled",
 };
 
+export const StockTransactionTypeEnum = {
+  IN: "in",
+  OUT: "out",
+  ADJUST: "adjust",
+};
+
+export const StockReferenceTypeEnum = {
+  PURCHASE: "purchase",
+  ORDER: "order",
+  RETURN: "return",
+  ADJUST: "adjust",
+};
+
 export const AvailableUserRole = Object.values(UserRoleEnum);
 export const AvailablePrescriptionStatus = Object.values(
   PrescriptionStatusEnum,
@@ -83,3 +96,7 @@ export const AvailableMedicineBatchStatusEnum = Object.values(
   MedicineBatchStatusEnum,
 );
 export const AvailablePurchaseStatus = Object.values(PurchaseOrderStatusEnum);
+export const AvailableStockTransactionType = Object.values(
+  StockTransactionTypeEnum,
+);
+export const AvailableStockReferenceType = Object.values(StockReferenceTypeEnum);
