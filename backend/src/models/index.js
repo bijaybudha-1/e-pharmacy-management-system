@@ -18,6 +18,9 @@ import purchaseOrdersTable, {
   purchaseOrderEnum,
 } from "./purchaseOrder.model.js";
 import purchaseOrderItem from "./purchaseOrderItem.model.js";
+import medicineBatchTable, {
+  medicineBatchStatusEnum,
+} from "./medicineBatch.model.js";
 
 export {
   userTable,
@@ -43,4 +46,6 @@ export {
   purchaseOrdersTable,
   purchaseOrderEnum,
   purchaseOrderItem,
+  medicineBatchTable,
+  medicineBatchStatusEnum,
 };

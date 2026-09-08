@@ -12,12 +12,12 @@ import {
   AvailableMedicineBatchStatusEnum,
 } from "../utils/constants.js";
 
-const medicineBatchStatusEnum = pgEnum(
+export const medicineBatchStatusEnum = pgEnum(
   "medicine_batch",
   AvailableMedicineBatchStatusEnum,
 );
 
-const medicineBatchTable = pgTable("medicineBatch", {
+const medicineBatchTable = pgTable("medicineBatchTable", {
   batchId: uuid("batch_id").primaryKey().defaultRandom(),
   medicineId: uuid("medicine_id")
     .notNull()
