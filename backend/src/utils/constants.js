@@ -57,6 +57,12 @@ export const PaymentMethodEnum = {
   BANK_TRANSFER: "bank_transfer",
 };
 
+export const MedicineBatchStatusEnum = {
+  ACTIVE: "active",
+  EXPIRED: "expired",
+  DEPLETED: "depleted",
+};
+
 export const AvailableUserRole = Object.values(UserRoleEnum);
 export const AvailablePrescriptionStatus = Object.values(
   PrescriptionStatusEnum,
@@ -67,3 +73,6 @@ export const AvailableGender = Object.values(GenderEnum);
 export const AvailableOrderStatus = Object.values(OrderStatusEnum);
 export const AvailablePaymentStatusEnum = Object.values(PaymentStatusEnum);
 export const AvailablePaymentMethodEnum = Object.values(PaymentMethodEnum);
+export const AvailableMedicineBatchStatusEnum = Object.values(
+  MedicineBatchStatusEnum,
+);
