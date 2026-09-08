@@ -17,6 +17,7 @@ import suppliersTable, { supplierEnumStatus } from "./supplier.model.js";
 import purchaseOrdersTable, {
   purchaseOrderEnum,
 } from "./purchaseOrder.model.js";
+import purchaseOrderItem from "./purchaseOrderItem.model.js";
 
 export {
   userTable,
@@ -41,4 +42,5 @@ export {
   supplierEnumStatus,
   purchaseOrdersTable,
   purchaseOrderEnum,
+  purchaseOrderItem,
 };
